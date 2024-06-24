@@ -36,7 +36,7 @@ const NewPage: React.FC = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/board/${id}`);
+      await axios.delete(`/api/boards/${id}`);
       navigate('/'); // 삭제 후 홈페이지로 이동
     } catch (error) {
       console.error('Error deleting post:', error);

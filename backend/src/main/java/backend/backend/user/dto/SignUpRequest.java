@@ -4,10 +4,7 @@ import backend.backend.user.entity.Affiliation;
 import backend.backend.user.entity.AuthProvider;
 import backend.backend.user.entity.Role;
 import backend.backend.user.entity.User;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public record SignUpRequest(
@@ -22,7 +19,7 @@ public record SignUpRequest(
         @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\\d~!@#$%^&*()+|=]{8,16}$", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
         String password,
 
-        @NotEmpty(message = "소속은 공백일 수 없습니다.")
+        @NotNull(message = "소속은 공백일 수 없습니다.")
         Affiliation affiliation
 ) {
     public User toEntity() {
