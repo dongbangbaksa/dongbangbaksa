@@ -35,6 +35,14 @@ const FileInput = styled.input`
   box-sizing: border-box;
 `;
 
+const Select = styled.select`
+  margin-bottom: 20px;
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
 const Button = styled.button`
   padding: 10px 20px;
   background-color: #4caf50;
@@ -93,6 +101,12 @@ const WritePage: React.FC = () => {
       <h1>Write a New Post</h1>
       <form onSubmit={handleSubmit}>
         <Input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <Select value={category} onChange={(e) => setCategory(e.target.value)} required>
+          <option value="SUGGESTION">Suggestion</option>
+          <option value="NOTICE">Notice</option>
+          <option value="EVENT">Event</option>
+          {/* 필요한 다른 카테고리를 여기에 추가 */}
+        </Select>
         <TextArea placeholder="Content" value={context} onChange={(e) => setContext(e.target.value)} required />
         <FileInput type="file" multiple onChange={(e) => setFiles(e.target.files)} />
         <Button type="submit">Submit</Button>
