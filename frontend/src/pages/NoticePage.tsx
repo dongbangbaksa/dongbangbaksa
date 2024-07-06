@@ -62,8 +62,16 @@ const WriteButton = styled.button`
 
 interface BoardItem {
   boardId: number;
+  author: string;
+  authorEmail: string;
+  category: string;
   title: string;
   context: string;
+  viewCount: number;
+  commentCount: number;
+  imageUrls: string[];
+  createdAt: string;
+  id: number;
 }
 
 const NoticePage: React.FC = () => {
@@ -114,6 +122,7 @@ const NoticePage: React.FC = () => {
       const url = `/api/boards?category=NOTICE${cursorParam}`;
 
       const response = await axios.get(url);
+      console.log('API response:', response.data);
       const { values, hasNext, cursor: newCursor } = response.data;
 
       if (!values || values.length === 0) {
@@ -150,7 +159,7 @@ const NoticePage: React.FC = () => {
         <WriteButton onClick={handleWriteClick}>Write Post</WriteButton>
         {data.length > 0 ? (
           data.map((item) => (
-            <StyledLink to={`/NewPage/${item.boardId}`} key={item.boardId}>
+            <StyledLink to={`/Post/${item.boardId}`} key={item.boardId}>
               <Box>
                 <Title>{item.title}</Title>
                 <Content>{item.context}</Content>

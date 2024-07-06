@@ -3,87 +3,115 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../util/axiosConfig';
 import styled from 'styled-components';
 
-// 스타일드 컴포넌트를 함수 컴포넌트 외부에서 선언
-const Title = styled.h1`
-  color: #333;
-  font-size: 24px;
-  margin-bottom: 10px;
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 20px;
 `;
 
-const InputField = styled.input`
-  width: 100%;
-  height: 40px;
-  font-size: 16px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
+const Input = styled.input`
   margin-bottom: 20px;
-`;
-
-const TextAreaField = styled.textarea`
-  width: 100%;
-  height: 120px;
+  padding: 10px;
   font-size: 16px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  width: 100%;
   box-sizing: border-box;
-  margin-bottom: 20px;
 `;
 
-const SubmitButton = styled.button`
-  background-color: #232323;
-  color: #fff;
+const TextArea = styled.textarea`
+  margin-bottom: 20px;
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
+const FileInput = styled.input`
+  margin-bottom: 20px;
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
+const Select = styled.select`
+  margin-bottom: 20px;
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
+const Button = styled.button`
   padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  border-radius: 5px;
   cursor: pointer;
 `;
 
 const WritePage: React.FC = () => {
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [context, setContext] = useState('');
+  const [title, setTitle] = useState<string>('');
+  const [category, setCategory] = useState<string>('SUGGESTION');
+  const [context, setContext] = useState<string>('');
+  const [files, setFiles] = useState<FileList | null>(null);
   const navigate = useNavigate();
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
-  };
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCategory(e.target.value);
-  };
+    const formData = new FormData();
+    formData.append(
+      'boardRequestOnlyJson',
+      new Blob(
+        [
+          JSON.stringify({
+            title,
+            category,
+            context,
+          }),
+        ],
+        { type: 'application/json' },
+      ),
+    );
 
-  const handleContextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setContext(e.target.value);
-  };
-
-  const handleSave = () => {
-    axios
-      .post('/api/boards', { title, category, context })
-      .then((response) => {
-        console.log('글이 성공적으로 저장되었습니다!', response.data);
-        alert('글이 성공적으로 등록되었습니다!');
-        navigate('/Notice', { state: { title, content: context } });
-      })
-      .catch((error) => {
-        console.error('글 저장 중 오류가 발생했습니다:', error);
-        alert('글 등록 중 오류가 발생했습니다!');
+    if (files) {
+      Array.from(files).forEach((file) => {
+        formData.append('files', file);
       });
+    }
+
+    try {
+      await axios.post('/api/boards', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Error creating post:', error);
+      alert('An error occurred while creating the post.');
+    }
   };
 
   return (
-    <div>
-      <Title>제목</Title>
-      <InputField type="text" value={title} onChange={handleTitleChange} placeholder="제목을 입력하세요" />
-      <Title>카테고리</Title>
-      <InputField type="text" value={category} onChange={handleCategoryChange} placeholder="'Notice'를 입력해주세요" />
-      <Title>본문</Title>
-      <TextAreaField value={context} onChange={handleContextChange} placeholder="본문을 입력하세요" />
-      <SubmitButton onClick={handleSave}>입력</SubmitButton>
-    </div>
+    <PageContainer>
+      <h1>Write a New Post</h1>
+      <form onSubmit={handleSubmit}>
+        <Input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <Select value={category} onChange={(e) => setCategory(e.target.value)} required>
+          <option value="SUGGESTION">Suggestion</option>
+          <option value="NOTICE">Notice</option>
+          <option value="EVENT">Event</option>
+          {/* 필요한 다른 카테고리를 여기에 추가 */}
+        </Select>
+        <TextArea placeholder="Content" value={context} onChange={(e) => setContext(e.target.value)} required />
+        <FileInput type="file" multiple onChange={(e) => setFiles(e.target.files)} />
+        <Button type="submit">Submit</Button>
+      </form>
+    </PageContainer>
   );
 };
 
