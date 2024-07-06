@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from '../util/axiosConfig';
 import styled from 'styled-components';
+import { fetchPostById, deletePostById } from '../util/api';
 
 const Button = styled.button`
   width: 100px;
@@ -22,8 +22,8 @@ const PostPage: React.FC = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`/api/boards/${id}`);
-        setPost(response.data);
+        const data = await fetchPostById(id);
+        setPost(data);
       } catch (error) {
         console.error('Error fetching post:', error);
       }
@@ -32,11 +32,11 @@ const PostPage: React.FC = () => {
     fetchPost();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]); // ID가 변경될 때마다 호출합니다.
+  }, [id]); // ID가 변경될 때마다 호출
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/boards/${id}`);
+      await deletePostById(id);
       navigate('/');
     } catch (error) {
       console.error('Error deleting post:', error);
