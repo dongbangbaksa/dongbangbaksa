@@ -4,7 +4,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import axios from '../util/axiosConfig';
+import { checkLoginStatus } from '../util/api';
 
 const StyledSlider = styled(Slider)`
   height: 100%;
@@ -66,6 +66,7 @@ const StudyLabel = styled.span`
   border-radius: 5px;
   margin-left: 34px;
 `;
+
 const RoundedRectangle = styled.div`
   position: absolute;
   width: 700px;
@@ -95,6 +96,7 @@ const RoundedRectangle = styled.div`
     margin-left: 60px;
   }
 `;
+
 const RoundedRectangle2 = styled.div`
   position: absolute;
   width: 700px;
@@ -144,8 +146,8 @@ const BannerSlider: React.FC = () => {
 
   const handleReservationClick = async () => {
     try {
-      const response = await axios.get('/api/users/login-confirm');
-      const isLoggedIn = response.data.loggedIn;
+      const data = await checkLoginStatus();
+      const isLoggedIn = data.loggedIn;
 
       if (!isLoggedIn) {
         window.location.href = '/login';
@@ -187,4 +189,5 @@ const BannerSlider: React.FC = () => {
     </Banner>
   );
 };
+
 export default BannerSlider;

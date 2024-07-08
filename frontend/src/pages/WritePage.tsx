@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../util/axiosConfig';
 import styled from 'styled-components';
+import { createPost } from '../util/api';
 
 const PageContainer = styled.div`
   display: flex;
@@ -84,11 +84,7 @@ const WritePage: React.FC = () => {
     }
 
     try {
-      await axios.post('/api/boards', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await createPost(formData);
       navigate('/');
     } catch (error) {
       console.error('Error creating post:', error);
@@ -105,7 +101,7 @@ const WritePage: React.FC = () => {
           <option value="SUGGESTION">Suggestion</option>
           <option value="NOTICE">Notice</option>
           <option value="EVENT">Event</option>
-          {/* 필요한 다른 카테고리를 여기에 추가 */}
+          {/* 필요한 다른 카테고리 여기에 추가 */}
         </Select>
         <TextArea placeholder="Content" value={context} onChange={(e) => setContext(e.target.value)} required />
         <FileInput type="file" multiple onChange={(e) => setFiles(e.target.files)} />

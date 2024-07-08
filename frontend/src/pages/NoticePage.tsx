@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from '../util/axiosConfig';
 import styled from 'styled-components';
+import { fetchNoticeBoards } from '../util/api';
 
 const PageContainer = styled.div`
   display: flex;
@@ -118,12 +118,9 @@ const NoticePage: React.FC = () => {
     if (!hasMore || loading) return;
     setLoading(true);
     try {
-      const cursorParam = cursor ? `&cursor=${cursor}` : '&cursor=0';
-      const url = `/api/boards?category=NOTICE${cursorParam}`;
-
-      const response = await axios.get(url);
-      console.log('API response:', response.data);
-      const { values, hasNext, cursor: newCursor } = response.data;
+      const response = await fetchNoticeBoards('NOTICE', cursor);
+      console.log('API response:', response);
+      const { values, hasNext, cursor: newCursor } = response;
 
       if (!values || values.length === 0) {
         setHasMore(false);
