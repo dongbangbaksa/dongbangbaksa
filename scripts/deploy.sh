@@ -45,7 +45,7 @@ if [ -z "$EXIST_BLUE" ]; then
 
   sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose-blue.yml up -d --build
 
-  sleep 120
+  sleep 240
 
   BLUE_STATUS=$(sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose-blue.yml ps | awk '{$1=""; $2=""; $3=""; $4=""; $5=""; print $0}' | sed 's/^[ \t]*//')
 
@@ -94,6 +94,7 @@ else
 
     else
       echo "blue 중단 시작 : $(TZ="Asia/Seoul" date '+%Y-%m-%d %H:%M:%S')" >> /opt/deploy.log
+
 
       sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose-blue.yml down -v --rmi all
 
