@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from '../util/axiosConfig';
 import styled from 'styled-components';
 import Modal from '../components/Modal';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { isLoggedInState } from '../recoil/recoilState';
+import { fetchReservations, deleteReservation, signOutUser } from '../util/api';
 
 const Title = styled.h1`
   font-size: 50px;
@@ -86,8 +86,8 @@ const MyPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('/api/reservation/check');
-        setReservations(response.data as YourReservationType[]);
+        const data = await fetchReservations();
+        setReservations(data as YourReservationType[]);
       } catch (error) {
         console.error('예약 정보를 가져오는 중 에러 발생:', error);
       }
@@ -97,7 +97,7 @@ const MyPage: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('/api/users/signout');
+      await signOutUser();
       console.log('로그아웃 성공');
       setIsLogoutModalOpen(true);
       setModalContent('로그아웃이 완료 되었습니다.');
@@ -110,7 +110,7 @@ const MyPage: React.FC = () => {
 
   const handleDeleteReservation = async (id: number) => {
     try {
-      await axios.delete(`/api/reservation/${id}`);
+      await deleteReservation(id);
       setReservations((prevReservations) => prevReservations.filter((reservation) => reservation.id !== id));
       console.log('예약 삭제 성공');
       setIsCancelModalOpen(true);

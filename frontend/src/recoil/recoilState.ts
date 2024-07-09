@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-// 로컬 스토리지에서 토큰을 가져오는 함수
+// 로컬 스토리지에서 토큰 가져오는 함수
 const getAccessTokenFromLocalStorage = () => localStorage.getItem('accessToken');
 const getRefreshTokenFromLocalStorage = () => localStorage.getItem('refreshToken');
 

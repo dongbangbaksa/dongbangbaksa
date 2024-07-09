@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import axios from '../util/axiosConfig';
 import Modal from '../components/Modal';
 import { useSetRecoilState } from 'recoil';
 import { accessTokenState, refreshTokenState, isLoggedInState } from '../recoil/recoilState';
+import { signInUser } from '../util/api';
 
 const FormContainer = styled.div`
   max-width: 600px;
@@ -83,7 +83,7 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await axios.post('/api/user/sign-in', { email, password });
+      const response = await signInUser(email, password);
       const accessTokenFromHeader = response.headers['authorization'];
       const refreshTokenFromHeader = response.headers['refresh-token'];
 

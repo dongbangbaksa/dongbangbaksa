@@ -12,7 +12,7 @@ import ReservationPage from './pages/ReservationPage';
 import SelectPage from './pages/SelectPage';
 import MyPage from './pages/MyPage';
 import WritePage from './pages/WritePage';
-import NewPage from './pages/NewPage';
+import PostPage from './pages/PostPage';
 
 const App: React.FC = () => {
   return (
@@ -32,7 +32,7 @@ const App: React.FC = () => {
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/writepage" element={<WritePage />} />
-            <Route path="/newpage/:id" element={<NewPage />} />
+            <Route path="/post/:id" element={<PostPage />} />
           </Routes>
         </div>
       </Router>

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import axios from '../util/axiosConfig';
 import { AxiosError } from 'axios';
 import { Link } from 'react-router-dom';
 import Modal from '../components/Modal';
+import { requestEmailVerification, confirmEmailVerification, signUpUser } from '../util/api';
 
 const JoinText = styled.div`
   font-size: 70px;
@@ -100,6 +100,7 @@ const PasswordInput = styled(Input).attrs({ type: 'password', autoComplete: 'new
   margin-bottom: 0px;
   border-radius: 0;
 `;
+
 const JoinPage: React.FC = () => {
   const [affiliation, setAffiliation] = useState('');
   const [email, setEmail] = useState('');
@@ -108,16 +109,13 @@ const JoinPage: React.FC = () => {
   const [authCode, setAuthCode] = useState('');
   const [name, setName] = useState('');
   const [verificationMessage] = useState<string>('');
-  const [isPasswordMatch] = useState(false);
+  const [, setIsPasswordMatch] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>(null);
 
-  const sendCode = async () => {
+  const handleSendCodeClick: React.MouseEventHandler<HTMLButtonElement> = async () => {
     try {
-      await axios.post('/api/email/verification/request', {
-        email: email,
-      });
-
+      await requestEmailVerification(email);
       setIsModalOpen(true);
       setModalContent('이메일로 인증번호가 전송되었습니다.');
     } catch (error) {
@@ -128,51 +126,38 @@ const JoinPage: React.FC = () => {
       }
     }
   };
-  const handleSendCodeClick: React.MouseEventHandler<HTMLButtonElement> = async () => {
-    try {
-      await sendCode();
-    } catch (error) {
-      console.error('handleSendCodeClick 오류:', (error as AxiosError).message);
-    }
-  };
+
   const handleConfirmAuthClick = async () => {
     try {
-      const response = await axios.post('/api/email/verification/confirm', {
-        email,
-        code: authCode,
-      });
-
+      const response = await confirmEmailVerification(email, authCode);
       setIsModalOpen(true);
-
-      setModalContent(response.data.message);
+      setModalContent(response.message);
     } catch (error) {
       console.error('인증 확인 중 에러:', (error as AxiosError).message);
     }
   };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    {
-      try {
-        const response = await axios.post('/api/user/sign-up', {
-          affiliation,
-          name,
-          email,
-          password,
-        });
-
-        setIsModalOpen(true);
-
-        setModalContent('회원가입이 완료되었습니다.');
-        console.log('서버 응답:', response.data);
-      } catch (error) {
-        console.error('서버로의 데이터 전송 중 에러:', error);
-      }
+    if (password !== passwordConfirm) {
+      setIsPasswordMatch(false);
+      setModalContent('비밀번호가 일치하지 않습니다.');
+      setIsModalOpen(true);
+      return;
+    } else {
+      setIsPasswordMatch(true);
     }
-    if (!isPasswordMatch) {
-      console.error('비밀번호가 일치하지 않습니다.');
+
+    try {
+      await signUpUser(affiliation, name, email, password);
+      setIsModalOpen(true);
+      setModalContent('회원가입이 완료되었습니다.');
+    } catch (error) {
+      console.error('서버로의 데이터 전송 중 에러:', error);
     }
   };
+
   return (
     <>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

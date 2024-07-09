@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from '../util/axiosConfig';
 import styled from 'styled-components';
+import { fetchNoticeBoards } from '../util/api';
 
 const PageContainer = styled.div`
   display: flex;
@@ -62,8 +62,16 @@ const WriteButton = styled.button`
 
 interface BoardItem {
   boardId: number;
+  author: string;
+  authorEmail: string;
+  category: string;
   title: string;
   context: string;
+  viewCount: number;
+  commentCount: number;
+  imageUrls: string[];
+  createdAt: string;
+  id: number;
 }
 
 const NoticePage: React.FC = () => {
@@ -110,11 +118,9 @@ const NoticePage: React.FC = () => {
     if (!hasMore || loading) return;
     setLoading(true);
     try {
-      const cursorParam = cursor ? `&cursor=${cursor}` : '&cursor=0';
-      const url = `/api/boards?category=NOTICE${cursorParam}`;
-
-      const response = await axios.get(url);
-      const { values, hasNext, cursor: newCursor } = response.data;
+      const response = await fetchNoticeBoards('NOTICE', cursor);
+      console.log('API response:', response);
+      const { values, hasNext, cursor: newCursor } = response;
 
       if (!values || values.length === 0) {
         setHasMore(false);
@@ -150,7 +156,7 @@ const NoticePage: React.FC = () => {
         <WriteButton onClick={handleWriteClick}>Write Post</WriteButton>
         {data.length > 0 ? (
           data.map((item) => (
-            <StyledLink to={`/NewPage/${item.boardId}`} key={item.boardId}>
+            <StyledLink to={`/Post/${item.boardId}`} key={item.boardId}>
               <Box>
                 <Title>{item.title}</Title>
                 <Content>{item.context}</Content>

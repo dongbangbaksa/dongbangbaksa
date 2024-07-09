@@ -3,12 +3,12 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import styled from 'styled-components';
 import TimeSelect from '../components/TimeSelect';
-import axios from '../util/axiosConfig';
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../components/Modal';
 import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '../recoil/recoilState';
+import { createReservation } from '../util/api';
 
 const ReservationPageWrapper = styled.div``;
 
@@ -108,7 +108,7 @@ const ReservationPage: React.FC = () => {
       const isoStartTime = reservationStartTime.toISOString().replace(/\.000Z$/, '');
       const isoEndTime = reservationEndTime.toISOString().replace(/\.000Z$/, '');
       try {
-        const response = await axios.post('/api/reservation', {
+        const response = await createReservation({
           reservationStartTime: isoStartTime,
           reservationEndTime: isoEndTime,
           members: selectedMembers.value,

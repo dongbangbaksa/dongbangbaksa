@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from '../util/axiosConfig';
 import styled from 'styled-components';
+import { fetchPostById, deletePostById } from '../util/api';
 
 const Button = styled.button`
   width: 100px;
@@ -14,30 +14,30 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-const NewPage: React.FC = () => {
-  const { id } = useParams(); // URL에서 ID 값을 가져옵니다.
+const PostPage: React.FC = () => {
+  const { id } = useParams();
   const [post, setPost] = useState<any>({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`/api/boards/${id}`);
-        setPost(response.data); // 서버로부터 받은 데이터를 상태에 저장합니다.
+        const data = await fetchPostById(id);
+        setPost(data);
       } catch (error) {
         console.error('Error fetching post:', error);
       }
     };
 
-    fetchPost(); // 컴포넌트가 마운트될 때 게시글을 불러옵니다.
+    fetchPost();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]); // ID가 변경될 때마다 호출합니다.
+  }, [id]); // ID가 변경될 때마다 호출
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/board/${id}`);
-      navigate('/'); // 삭제 후 홈페이지로 이동
+      await deletePostById(id);
+      navigate('/');
     } catch (error) {
       console.error('Error deleting post:', error);
     }
@@ -47,9 +47,13 @@ const NewPage: React.FC = () => {
     <div>
       <h1>{post.title}</h1>
       <p>{post.context}</p>
+      {post.imageUrls &&
+        post.imageUrls.map((url: string, index: number) => (
+          <img key={index} src={url} alt="Post Image" style={{ width: '100%', marginBottom: '10px' }} />
+        ))}
       <Button onClick={handleDelete}>삭제</Button>
     </div>
   );
 };
 
-export default NewPage;
+export default PostPage;
