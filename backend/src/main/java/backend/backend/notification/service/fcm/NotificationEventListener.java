@@ -1,6 +1,5 @@
 package backend.backend.notification.service.fcm;
 
-import backend.backend.common.constant.FcmNotificationCategory;
 import backend.backend.common.event.CommentCreateEvent;
 import backend.backend.common.event.ReservationReminderEvent;
 import backend.backend.notification.domain.FcmNotification;
