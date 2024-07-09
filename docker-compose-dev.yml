@@ -10,7 +10,6 @@ services:
       MYSQL_PASSWORD: 1234
     volumes:
       - mysql_data:/var/lib/mysql
-    #      - ./backend/init_db/init.sql:/docker-entrypoint-initdb.d/init.sql
     command:
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_unicode_ci"
@@ -33,29 +32,49 @@ services:
     depends_on:
       - mysql
       - redis
-    command: ["java", "-jar", "/app.jar"]
+    command: [ "java", "-jar", "/app.jar" ]
     volumes:
       - ./backend:/app
       - ./backend/target/classes:/app/classes
   #
-  #  frontend:
-  #    container_name: frontend
-  #    build:
-  #      context: frontend
-  #      dockerfile: dockerfile
-  #    command: [ "npm", "run", "dev" ]
-  #    volumes:
-  #      - ./frontend:/frontend
-  #      - /frontend/node_modules
-  #      - ./frontend/.npm/_cacache:/frontend/.npm/_cacache
-  #      - build_folder:/frontend/dist
-  #    ports:
-  #      - "5173:5173"
-  #    tty: true
-  #    environment:
-  #      - npm_config_cache=/frontend/.npm/_cacache
-  #    depends_on:
-  #      - backend
+  frontend:
+    container_name: frontend
+    build:
+      context: frontend
+      dockerfile: dockerfile
+    command: [ "npm", "run", "dev" ]
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules
+      - ./frontend/.npm/_cacache:/frontend/.npm/_cacache
+      - build_folder:/frontend/dist
+    ports:
+        - "5173:5173"
+    tty: true
+    environment:
+      - npm_config_cache=/frontend/.npm/_cacache
+    depends_on:
+      - backend
+#
+#  frontend:
+#    container_name: frontend
+#    build:
+#      context: frontend
+#      dockerfile: dockerfile
+#    command: [ "npm", "run", "dev" ]
+#    volumes:
+#      - ./frontend:/frontend
+#      - /frontend/node_modules
+#      - ./frontend/.npm/_cacache:/frontend/.npm/_cacache
+#      - build_folder:/frontend/dist
+#    ports:
+#      - "5173:5173"
+#    tty: true
+#    environment:
+#      - npm_config_cache=/frontend/.npm/_cacache
+#    depends_on:
+#      - backend
+
 
   redis:
     hostname: redis
