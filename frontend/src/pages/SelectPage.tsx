@@ -6,9 +6,10 @@ const StyledReservationPage = styled.div`
   position: relative;
   background-size: cover;
   background-position: center;
-  width: 100%;
-  height: 100%;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   color: #ffffff;
   overflow: hidden;
 `;
@@ -16,23 +17,20 @@ const StyledReservationPage = styled.div`
 const WhiteBox = styled.div`
   position: relative;
   width: 280px;
-  height: 400px;
+  height: 360px;
   background: #ffffff;
-  box-shadow: 4.00406px 4.00406px 40.0406px rgba(0, 0, 0, 0.15);
-  border-radius: 40.0406px;
-  margin-top: 200px;
-  margin-left: 140px;
+  box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.15);
+  border-radius: 40px;
   padding: 20px;
-  margin-bottom: 110px;
 `;
 
 const TitleText = styled.div`
   font-family: 'Inter';
   font-style: normal;
   font-weight: 600;
-  font-size: 28px;
+  font-size: 24px;
   color: #000000;
-  margin-top: 30px;
+  margin-top: 20px;
   margin-left: 20px;
 `;
 
@@ -40,26 +38,28 @@ const AdditionalText = styled.div`
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 18px;
+  font-size: 16px;
   color: #000000;
-  margin-top: 30px;
+  margin-top: 20px;
   margin-left: 20px;
   margin-right: 20px;
 `;
 
 const ReserveText = styled.div`
-  position: absolute;
-  top: 110px;
-  left: 140px;
   font-size: 28px;
   font-weight: 300;
+  margin-bottom: 40px;
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
 `;
 
 const SelectPage: React.FC = () => {
   return (
     <StyledReservationPage>
       <ReserveText>예약</ReserveText>
-      <Link to="/reservation">
+      <StyledLink to="/reservation">
         <WhiteBox>
           <TitleText>Palo Alto</TitleText>
           <AdditionalText>
@@ -67,7 +67,7 @@ const SelectPage: React.FC = () => {
             북부의 도시의 이름에서 따온 방입니다.
           </AdditionalText>
         </WhiteBox>
-      </Link>
+      </StyledLink>
     </StyledReservationPage>
   );
 };
