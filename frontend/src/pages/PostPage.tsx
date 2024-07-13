@@ -3,6 +3,40 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { fetchPostById, deletePostById } from '../util/api';
 
+const PostContainer = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const Title = styled.h1`
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+`;
+
+const Content = styled.p`
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 5px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 const Button = styled.button`
   width: 100px;
   height: 40px;
@@ -12,6 +46,10 @@ const Button = styled.button`
   color: white;
   font-size: 16px;
   cursor: pointer;
+
+  &:hover {
+    background-color: #444;
+  }
 `;
 
 const PostPage: React.FC = () => {
@@ -30,9 +68,7 @@ const PostPage: React.FC = () => {
     };
 
     fetchPost();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]); // ID가 변경될 때마다 호출
+  }, [id]);
 
   const handleDelete = async () => {
     try {
@@ -44,15 +80,18 @@ const PostPage: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>{post.title}</h1>
-      <p>{post.context}</p>
+    <PostContainer>
+      <Title>{post.title}</Title>
+      <Content>{post.context}</Content>
       {post.imageUrls &&
         post.imageUrls.map((url: string, index: number) => (
-          <img key={index} src={url} alt="Post Image" style={{ width: '100%', marginBottom: '10px' }} />
+          <Image key={index} src={url} alt={`Post Image ${index + 1}`} />
         ))}
-      <Button onClick={handleDelete}>삭제</Button>
-    </div>
+      <ButtonContainer>
+        <Button onClick={() => navigate('/')}>뒤로가기</Button>
+        <Button onClick={handleDelete}>삭제</Button>
+      </ButtonContainer>
+    </PostContainer>
   );
 };
 

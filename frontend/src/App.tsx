@@ -6,7 +6,6 @@ import Header from './components/layout/Header';
 import NoticePage from './pages/NoticePage';
 import LoginPage from './pages/LoginPage';
 import JoinPage from './pages/JoinPage';
-import CommunityPage from './pages/CommunityPage';
 import AboutPage from './pages/AboutPage';
 import ReservationPage from './pages/ReservationPage';
 import SelectPage from './pages/SelectPage';
@@ -30,7 +29,6 @@ const App: React.FC = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/join" element={<JoinPage />} />
             <Route path="/mypage" element={<MyPage />} />
-            <Route path="/community" element={<CommunityPage />} />
             <Route path="/writepage" element={<WritePage />} />
             <Route path="/post/:id" element={<PostPage />} />
           </Routes>

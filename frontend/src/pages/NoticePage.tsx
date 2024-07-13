@@ -13,7 +13,6 @@ const PageContainer = styled.div`
 
 const Box = styled.div`
   width: 100%;
-  height: 180px;
   background-color: #ffffff;
   border: 1px solid #e4e4e4;
   display: flex;
@@ -22,6 +21,11 @@ const Box = styled.div`
   align-items: flex-start;
   padding: 10px;
   margin-bottom: 20px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #f8f8f8;
+  }
 `;
 
 const StyledLink = styled(Link)`
@@ -56,8 +60,12 @@ const WriteButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   margin-top: 20px;
-  width: calc(33.333% - 14px);
-  margin-right: 0;
+  width: 150px;
+  align-self: flex-end;
+
+  &:hover {
+    background-color: #45a049;
+  }
 `;
 
 interface BoardItem {
@@ -151,25 +159,23 @@ const NoticePage: React.FC = () => {
   };
 
   return (
-    <>
-      <PageContainer>
-        <WriteButton onClick={handleWriteClick}>Write Post</WriteButton>
-        {data.length > 0 ? (
-          data.map((item) => (
-            <StyledLink to={`/Post/${item.boardId}`} key={item.boardId}>
-              <Box>
-                <Title>{item.title}</Title>
-                <Content>{item.context}</Content>
-              </Box>
-            </StyledLink>
-          ))
-        ) : (
-          <p>No posts available.</p>
-        )}
-        {loading && <p>Loading...</p>}
-        {hasMore && <div ref={lastElementRef} />}
-      </PageContainer>
-    </>
+    <PageContainer>
+      <WriteButton onClick={handleWriteClick}>글쓰기</WriteButton>
+      {data.length > 0 ? (
+        data.map((item) => (
+          <StyledLink to={`/Post/${item.boardId}`} key={item.boardId}>
+            <Box>
+              <Title>{item.title}</Title>
+              <Content>{item.context}</Content>
+            </Box>
+          </StyledLink>
+        ))
+      ) : (
+        <p>No posts available.</p>
+      )}
+      {loading && <p>Loading...</p>}
+      {hasMore && <div ref={lastElementRef} />}
+    </PageContainer>
   );
 };
 

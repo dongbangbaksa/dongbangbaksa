@@ -75,9 +75,6 @@ const Header = () => {
             <li>
               <Link to="/Notice">Notice</Link>
             </li>
-            <li>
-              <Link to="/Community">Community</Link>
-            </li>
             {accessToken ? (
               <li>
                 <Link to="/Mypage">Mypage</Link>
