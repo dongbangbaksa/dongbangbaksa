@@ -6,50 +6,68 @@ import { createPost } from '../util/api';
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 100%;
+  align-items: center;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  background-color: #f5f5f7;
+  min-height: 100vh;
 `;
 
 const Input = styled.input`
   margin-bottom: 20px;
-  padding: 10px;
+  padding: 12px;
   font-size: 16px;
   width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   box-sizing: border-box;
 `;
 
 const TextArea = styled.textarea`
   margin-bottom: 20px;
-  padding: 10px;
+  padding: 12px;
   font-size: 16px;
   width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   box-sizing: border-box;
+  min-height: 150px;
 `;
 
 const FileInput = styled.input`
   margin-bottom: 20px;
-  padding: 10px;
+  padding: 12px;
   font-size: 16px;
   width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   box-sizing: border-box;
 `;
 
 const Select = styled.select`
   margin-bottom: 20px;
-  padding: 10px;
+  padding: 12px;
   font-size: 16px;
   width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   box-sizing: border-box;
 `;
 
 const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #4caf50;
+  padding: 12px 24px;
+  background-color: #0071e3;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #005bb5;
+  }
 `;
 
 const WritePage: React.FC = () => {
@@ -94,18 +112,18 @@ const WritePage: React.FC = () => {
 
   return (
     <PageContainer>
-      <h1>Write a New Post</h1>
+      <h1>글쓰기</h1>
       <form onSubmit={handleSubmit}>
-        <Input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <Input type="text" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)} required />
         <Select value={category} onChange={(e) => setCategory(e.target.value)} required>
           <option value="SUGGESTION">Suggestion</option>
           <option value="NOTICE">Notice</option>
           <option value="EVENT">Event</option>
           {/* 필요한 다른 카테고리 여기에 추가 */}
         </Select>
-        <TextArea placeholder="Content" value={context} onChange={(e) => setContext(e.target.value)} required />
+        <TextArea placeholder="내용" value={context} onChange={(e) => setContext(e.target.value)} required />
         <FileInput type="file" multiple onChange={(e) => setFiles(e.target.files)} />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">작성하기</Button>
       </form>
     </PageContainer>
   );

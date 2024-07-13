@@ -6,88 +6,117 @@ import { useRecoilState } from 'recoil';
 import { isLoggedInState } from '../recoil/recoilState';
 import { fetchReservations, deleteReservation, signOutUser } from '../util/api';
 
-const Title = styled.h1`
-  font-size: 50px;
-  font-weight: bold;
-  color: #3a3a3a;
-  text-align: center;
-  margin-top: 60px;
+const PageContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px;
+  background-color: #f9f9f9;
 `;
+
+const Title = styled.h1`
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 40px;
+`;
+
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
+  margin-top: 40px;
 `;
-const LogoutButton = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 100px;
+
+const LogoutButton = styled.button`
+  padding: 10px 20px;
+  background-color: #0071e3;
+  color: white;
   border: none;
-  background-color: #c0c0c0;
-  color: #ffffff;
-  font-size: 20px;
-  height: 40px;
-  width: 10%;
-  transition:
-    background-color 0.3s,
-    color 0.3s;
+  border-radius: 6px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
   &:hover {
-    background-color: #000000;
+    background-color: #005bb5;
   }
 `;
+
 const ReservationList = styled.ul`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: center;
   list-style-type: none;
   padding: 0;
 `;
+
 const ReservationItem = styled.li`
-  border: 1px solid #ccc;
-  padding: 10px;
+  width: 300px;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
   margin: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   position: relative;
 `;
+
 const DeleteButton = styled.button`
   position: absolute;
-  top: 5px;
-  right: 5px;
-  background-color: #ff0000;
-  color: #ffffff;
+  top: 10px;
+  right: 10px;
+  background-color: #ff3b30;
+  color: white;
   border: none;
-  padding: 5px;
+  border-radius: 6px;
+  padding: 5px 10px;
   cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #e02b20;
+  }
 `;
 
 const MeetingRoomName = styled.p`
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
+  color: #0071e3;
+  margin-bottom: 10px;
+`;
+
+const ReservationInfo = styled.p`
+  font-size: 16px;
+  color: #555;
   margin: 5px 0;
 `;
+
 type MeetingRoomType = {
   id: number;
   name: string;
 };
-type YourReservationType = {
+
+type ReservationType = {
   id: number;
   startTime: string;
   endTime: string;
   members: number;
   meetingRoom: MeetingRoomType;
 };
+
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
-  const [reservations, setReservations] = useState<YourReservationType[]>([]);
+  const [reservations, setReservations] = useState<ReservationType[]>([]);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>(null);
-  const [, setIsLoggedIn] = useRecoilState(isLoggedInState); // Recoil 상태 가져오기
+  const [, setIsLoggedIn] = useRecoilState(isLoggedInState);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await fetchReservations();
-        setReservations(data as YourReservationType[]);
+        setReservations(data as ReservationType[]);
       } catch (error) {
         console.error('예약 정보를 가져오는 중 에러 발생:', error);
       }
@@ -98,10 +127,8 @@ const MyPage: React.FC = () => {
   const handleLogout = async () => {
     try {
       await signOutUser();
-      console.log('로그아웃 성공');
       setIsLogoutModalOpen(true);
       setModalContent('로그아웃이 완료 되었습니다.');
-
       setIsLoggedIn(false);
     } catch (error) {
       console.error('로그아웃 실패', error);
@@ -112,7 +139,6 @@ const MyPage: React.FC = () => {
     try {
       await deleteReservation(id);
       setReservations((prevReservations) => prevReservations.filter((reservation) => reservation.id !== id));
-      console.log('예약 삭제 성공');
       setIsCancelModalOpen(true);
       setModalContent('예약이 취소 되었습니다.');
     } catch (error) {
@@ -126,7 +152,7 @@ const MyPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <PageContainer>
       <Modal isOpen={isCancelModalOpen} onClose={() => setIsCancelModalOpen(false)}>
         {modalContent}
       </Modal>
@@ -137,12 +163,10 @@ const MyPage: React.FC = () => {
       <ReservationList>
         {reservations.map((reservation) => (
           <ReservationItem key={reservation.id}>
-            <br />
             <MeetingRoomName>{reservation.meetingRoom.name}</MeetingRoomName>
-            <p>시작 시간 : {reservation.startTime.slice(0, -3)}</p>
-            <p>종료 시간 : {reservation.endTime.slice(0, -3)}</p>
-            <p>사용 인원 : {reservation.members}명</p>
-
+            <ReservationInfo>시작 시간 : {reservation.startTime.slice(0, -3)}</ReservationInfo>
+            <ReservationInfo>종료 시간 : {reservation.endTime.slice(0, -3)}</ReservationInfo>
+            <ReservationInfo>사용 인원 : {reservation.members}명</ReservationInfo>
             <DeleteButton onClick={() => handleDeleteReservation(reservation.id)}>취소</DeleteButton>
           </ReservationItem>
         ))}
@@ -150,7 +174,8 @@ const MyPage: React.FC = () => {
       <ButtonContainer>
         <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
       </ButtonContainer>
-    </div>
+    </PageContainer>
   );
 };
+
 export default MyPage;
