@@ -10,35 +10,70 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '../recoil/recoilState';
 import { createReservation } from '../util/api';
 
-const ReservationPageWrapper = styled.div``;
+const ReservationPageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-color: #f5f5f7; /* 애플 웹사이트 배경 색상 */
+  padding: 20px;
+`;
 
 const ContentWrapper = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start; /* 변경: 위에서 시작하도록 */
+  justify-content: space-between; /* 변경: 공간을 고르게 분배 */
+  width: 100%;
+  max-width: 1200px; /* 중앙 정렬을 위한 최대 너비 */
+  margin-top: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center; /* 모바일에서 중앙 정렬 */
+  }
 `;
 
-const HeaderSection = styled.div``;
+const HeaderSection = styled.div`
+  text-align: center;
+  margin-bottom: 40px;
+`;
 
 const Title = styled.h1`
-  font-size: 50px;
+  font-size: 36px;
   font-weight: bold;
-  color: #3a3a3a;
-  text-align: center;
-  margin-top: 60px;
-  margin-bottom: 0;
+  color: #333333;
+  margin: 0;
 `;
 
 const CalendarSelectContainer = styled.div`
-  margin-top: 50px;
+  flex: 1;
+  margin-right: 40px; /* 오른쪽 여백 추가 */
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-bottom: 20px; /* 모바일에서 아래 여백 추가 */
+  }
 `;
 
-const MemberSelect = styled.div`
-  margin-top: 10px;
+const TimeSelectContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  max-width: 300px;
+  width: 100%;
+`;
+
+const SelectWrapper = styled.div`
+  width: 100%;
+  margin-top: 20px;
 `;
 
 const Notice = styled.div`
-  margin-top: 15px;
+  margin-bottom: 15px;
   color: #7b7b7b;
   font-size: 14px;
 `;
@@ -46,30 +81,25 @@ const Notice = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 30px;
-`;
-
-const TimeSelectContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  width: 20%;
   margin-top: 40px;
+  width: 100%;
 `;
 
 const Button = styled.button`
   border: none;
-  background-color: #c0c0c0;
+  background-color: #0071e3; /* 애플 웹사이트 스타일 버튼 색상 */
   color: #ffffff;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: bold;
   height: 40px;
-  width: 10%;
+  width: 200px;
+  border-radius: 20px; /* 둥근 모서리 설정 */
+  cursor: pointer;
   transition:
     background-color 0.3s,
     color 0.3s;
   &:hover {
-    background-color: #000000;
+    background-color: #005bb5;
   }
 `;
 
@@ -156,24 +186,35 @@ const ReservationPage: React.FC = () => {
         </CalendarSelectContainer>
         <TimeSelectContainer>
           <Notice>* 캘린더에서 날짜를 먼저 선택해주세요.</Notice>
-          <TimeSelect
-            value={startTime}
-            onChange={(selectedTime: string) => setStartTime(selectedTime)}
-            label="예약 시작 시간을 선택하세요."
-          />
-          <TimeSelect
-            value={endTime}
-            onChange={(selectedTime: string) => setEndTime(selectedTime)}
-            label="예약 종료 시간을 선택하세요."
-          />
-          <MemberSelect>
+          <SelectWrapper>
+            <TimeSelect
+              value={startTime}
+              onChange={(selectedTime: string) => setStartTime(selectedTime)}
+              label="예약 시작 시간을 선택하세요."
+            />
+          </SelectWrapper>
+          <SelectWrapper>
+            <TimeSelect
+              value={endTime}
+              onChange={(selectedTime: string) => setEndTime(selectedTime)}
+              label="예약 종료 시간을 선택하세요."
+            />
+          </SelectWrapper>
+          <SelectWrapper>
             <label>인원을 선택하세요.</label>
             <Select
+              classNamePrefix="react-select"
               options={membersOptions}
               value={selectedMembers}
               onChange={(selectedOption) => setSelectedMembers(selectedOption)}
+              styles={{
+                control: (provided) => ({
+                  ...provided,
+                  height: '40px',
+                }),
+              }}
             />
-          </MemberSelect>
+          </SelectWrapper>
         </TimeSelectContainer>
       </ContentWrapper>
       <ButtonContainer>

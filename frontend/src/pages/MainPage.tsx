@@ -9,7 +9,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: #f5f5f7; /* 애플 웹사이트 배경 색상 */
+  background-color: #f5f5f7;
   margin: 0;
   padding: 0;
 `;
@@ -19,15 +19,15 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 800px; /* 중앙 정렬을 위한 최대 너비 */
+  max-width: 800px;
   padding: 20px;
 `;
 
 const RoundedRectangle = styled.div`
   width: 100%;
   background: #ffffff;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1); /* 그림자 설정 */
-  border-radius: 20px; /* 둥근 모서리 설정 */
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
   margin-top: 20px;
   padding: 30px;
   display: flex;
