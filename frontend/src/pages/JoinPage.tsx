@@ -6,99 +6,98 @@ import Modal from '../components/Modal';
 import { requestEmailVerification, confirmEmailVerification, signUpUser } from '../util/api';
 
 const JoinText = styled.div`
-  font-size: 70px;
+  font-size: 48px;
   font-weight: bold;
   color: #3a3a3a;
   text-align: center;
-  margin-top: 60px;
-  margin-bottom: 0px;
+  margin-top: 40px;
+  margin-bottom: 20px;
 `;
+
 const LoginText = styled.div`
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 300;
   color: #585858;
   text-align: center;
+  margin-bottom: 20px;
 `;
+
 const LoginLink = styled(Link)`
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 300;
-  color: #ffe8f6;
-  text-align: center;
+  color: #0071e3;
   text-decoration: none;
   cursor: pointer;
   &:hover {
-    color: #ffe8f6;
+    color: #005bb5;
   }
 `;
+
 const FormContainer = styled.div`
-  max-width: 600px;
-  margin: 50px auto;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  max-height: calc(100vh - 40px);
-  overflow: hidden;
-  color: #585858;
 `;
-const StyledForm = styled.form``;
+
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: 15px;
+`;
+
+const Label = styled.label`
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 5px;
+`;
+
+const Select = styled.select`
+  border: 1px solid #e4e4e4;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  width: 100%;
+`;
+
+const Input = styled.input`
+  border: 1px solid #e4e4e4;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  width: 100%;
   margin-bottom: 10px;
 `;
-const Select = styled.select`
-  border-radius: 0;
-  border: 0.7px solid #c0c0c0;
-  color: #585858;
-  height: 30px;
-  width: 405px;
-`;
-const Input = styled.input`
-  border-radius: 0;
-  border: 0.7px solid #c0c0c0;
-  height: 26px;
-  width: 400px;
-`;
-const JoinButton = styled.button`
+
+const Button = styled.button`
   border: none;
-  background-color: #c0c0c0;
+  background-color: #0071e3;
   color: #ffffff;
   font-size: 16px;
-  height: 26px;
-  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
   transition:
     background-color 0.3s,
     color 0.3s;
+  width: 100%;
+
   &:hover {
-    background-color: #000000;
+    background-color: #005bb5;
   }
-`;
-const SendCodeButton = styled(JoinButton)`
-  border: none;
-  background-color: #c0c0c0;
-  font-size: 15px;
-  height: 24px;
-  &:hover {
-    background-color: black;
-    border-color: black;
+
+  &:disabled {
+    background-color: #c0c0c0;
+    cursor: not-allowed;
   }
-`;
-const ConfirmAuthButton = styled(SendCodeButton)`
-  border: none;
-  height: 24px;
-`;
-const EmailInput = styled(Input).attrs({ type: 'email', autoComplete: 'email' })`
-  margin-bottom: 10px;
-  border-radius: 0;
-`;
-const AuthCodeInput = styled(Input).attrs({ autoComplete: 'off' })`
-  margin-bottom: 10px;
-  border-radius: 0;
-`;
-const PasswordInput = styled(Input).attrs({ type: 'password', autoComplete: 'new-password' })`
-  margin-bottom: 0px;
-  border-radius: 0;
 `;
 
 const JoinPage: React.FC = () => {
@@ -108,7 +107,7 @@ const JoinPage: React.FC = () => {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [authCode, setAuthCode] = useState('');
   const [name, setName] = useState('');
-  const [verificationMessage] = useState<string>('');
+  const [verificationMessage, setVerificationMessage] = useState<string>('');
   const [, setIsPasswordMatch] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>(null);
@@ -132,6 +131,7 @@ const JoinPage: React.FC = () => {
       const response = await confirmEmailVerification(email, authCode);
       setIsModalOpen(true);
       setModalContent(response.message);
+      setVerificationMessage('인증이 완료되었습니다.');
     } catch (error) {
       console.error('인증 확인 중 에러:', (error as AxiosError).message);
     }
@@ -163,18 +163,14 @@ const JoinPage: React.FC = () => {
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         {modalContent}
       </Modal>
-      <JoinText className="join">가입하기</JoinText>
-      <LoginText className="already">
-        이미 계정이 있습니까?{' '}
-        <LoginLink to="/login" className="login">
-          로그인
-        </LoginLink>
-        하기
+      <JoinText>가입하기</JoinText>
+      <LoginText>
+        이미 계정이 있습니까? <LoginLink to="/login">로그인</LoginLink>
       </LoginText>
       <FormContainer>
         <StyledForm onSubmit={handleSubmit}>
           <FormGroup>
-            <label htmlFor="affiliation">소속</label>
+            <Label htmlFor="affiliation">소속</Label>
             <Select
               id="affiliation"
               name="affiliation"
@@ -187,28 +183,40 @@ const JoinPage: React.FC = () => {
             </Select>
           </FormGroup>
           <FormGroup>
-            <label htmlFor="name">이름</label>
+            <Label htmlFor="name">이름</Label>
             <Input type="text" id="name" name="name" value={name} onChange={(event) => setName(event.target.value)} />
           </FormGroup>
           <FormGroup>
-            <label htmlFor="email">이메일</label>
-            <EmailInput id="email" name="email" value={email} onChange={(event) => setEmail(event.target.value)} />
-            <SendCodeButton onClick={handleSendCodeClick}>{'인증'}</SendCodeButton>
+            <Label htmlFor="email">이메일</Label>
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+            <Button type="button" onClick={handleSendCodeClick} disabled={!email}>
+              인증
+            </Button>
           </FormGroup>
           <FormGroup>
-            <label htmlFor="authCode">인증코드</label>
-            <AuthCodeInput
+            <Label htmlFor="authCode">인증코드</Label>
+            <Input
+              type="text"
               id="authCode"
               name="authCode"
               value={authCode}
               onChange={(event) => setAuthCode(event.target.value)}
             />
-            <ConfirmAuthButton onClick={handleConfirmAuthClick}>{'인증확인'}</ConfirmAuthButton>
+            <Button type="button" onClick={handleConfirmAuthClick} disabled={!authCode}>
+              인증확인
+            </Button>
             <div>{verificationMessage}</div>
           </FormGroup>
           <FormGroup>
-            <label htmlFor="password">비밀번호</label>
-            <PasswordInput
+            <Label htmlFor="password">비밀번호</Label>
+            <Input
+              type="password"
               id="password"
               name="password"
               value={password}
@@ -216,8 +224,9 @@ const JoinPage: React.FC = () => {
             />
           </FormGroup>
           <FormGroup>
-            <label htmlFor="passwordConfirm">비밀번호 확인</label>
-            <PasswordInput
+            <Label htmlFor="passwordConfirm">비밀번호 확인</Label>
+            <Input
+              type="password"
               id="passwordConfirm"
               name="passwordConfirm"
               value={passwordConfirm}
@@ -225,11 +234,12 @@ const JoinPage: React.FC = () => {
             />
           </FormGroup>
           <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-            <JoinButton>{'가입하기'}</JoinButton>
+            <Button type="submit">가입하기</Button>
           </div>
         </StyledForm>
       </FormContainer>
     </>
   );
 };
+
 export default JoinPage;

@@ -6,59 +6,73 @@ import { useSetRecoilState } from 'recoil';
 import { accessTokenState, refreshTokenState, isLoggedInState } from '../recoil/recoilState';
 import { signInUser } from '../util/api';
 
-const FormContainer = styled.div`
-  max-width: 600px;
-  margin: 50px auto;
+const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  max-height: calc(100vh - 40px);
-  overflow: hidden;
-  color: #585858;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+`;
+
+const FormContainer = styled.div`
+  max-width: 600px;
+  width: 100%;
+  padding: 40px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 `;
 
 const LoginText = styled.div`
-  font-size: 70px;
+  font-size: 48px;
   font-weight: bold;
-  color: #3a3a3a;
+  color: #333;
   text-align: center;
-  margin-top: 60px;
-  margin-bottom: 0px;
+  margin-bottom: 20px;
 `;
 
 const Input = styled.input`
-  border-radius: 0;
-  border: 0.7px solid #c0c0c0;
-  height: 26px;
-  width: 400px;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #e4e4e4;
+  border-radius: 6px;
+  font-size: 16px;
 `;
 
-const PasswordInput = styled(Input).attrs({ type: 'password', autoComplete: 'new-password' })`
-  margin-bottom: 0px;
-  border-radius: 0;
-`;
+const PasswordInput = styled(Input).attrs({ type: 'password', autoComplete: 'current-password' })``;
 
-const StyledForm = styled.form``;
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
 
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+`;
+
+const Label = styled.label`
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #555;
 `;
 
 const LoginButton = styled.button`
-  border: none;
-  background-color: #c0c0c0;
-  color: #ffffff;
-  font-size: 16px;
-  height: 26px;
   width: 100%;
-  transition:
-    background-color 0.3s,
-    color 0.3s;
+  padding: 12px;
+  background-color: #0071e3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
   &:hover {
-    background-color: #000000;
+    background-color: #005bb5;
   }
 `;
 
@@ -122,23 +136,25 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <FormContainer>
+    <Container>
       <Modal isOpen={isModalOpen} onClose={closeModalAndRedirect}>
         <p>로그인이 완료 되었습니다.</p>
       </Modal>
-      <LoginText>로그인</LoginText>
-      <StyledForm onSubmit={handleLogin}>
-        <FormGroup>
-          <label htmlFor="email">이메일</label>
-          <Input type="email" id="email" name="email" value={email} onChange={handleEmailChange} />
-        </FormGroup>
-        <FormGroup>
-          <label htmlFor="password">비밀번호</label>
-          <PasswordInput id="password" name="password" value={password} onChange={handlePasswordChange} />
-        </FormGroup>
-        <LoginButton type="submit">로그인</LoginButton>
-      </StyledForm>
-    </FormContainer>
+      <FormContainer>
+        <LoginText>로그인</LoginText>
+        <StyledForm onSubmit={handleLogin}>
+          <FormGroup>
+            <Label htmlFor="email">이메일</Label>
+            <Input type="email" id="email" name="email" value={email} onChange={handleEmailChange} />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="password">비밀번호</Label>
+            <PasswordInput id="password" name="password" value={password} onChange={handlePasswordChange} />
+          </FormGroup>
+          <LoginButton type="submit">로그인</LoginButton>
+        </StyledForm>
+      </FormContainer>
+    </Container>
   );
 };
 
