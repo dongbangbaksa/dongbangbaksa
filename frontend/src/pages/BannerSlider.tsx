@@ -3,134 +3,87 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { checkLoginStatus } from '../util/api';
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: #f5f5f7; /* 애플 웹사이트 배경 색상 */
+
+  @media (max-width: 768px) {
+    padding: 0 20px;
+  }
+`;
 
 const StyledSlider = styled(Slider)`
-  height: 100%;
+  width: 100%;
+  max-width: 800px;
+
   .slick-list {
     height: 100%;
   }
+
   .slick-slide {
-    margin-left: 40px;
-    margin-right: 20px;
-    height: 100%;
+    display: flex;
+    justify-content: center;
   }
 `;
 
-const Banner = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  position: relative;
-  margin-top: 50px;
-`;
-
 const Background = styled.div`
-  background-color: #ececec;
+  background-color: #ffffff;
   width: 100%;
-  height: 100%;
-  color: white;
+  max-width: 600px;
+  height: auto;
+  color: #000000;
   border-radius: 10px;
   padding: 20px;
-  position: relative;
-  margin-left: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1); /* 그림자 설정 */
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 10px;
+  }
 `;
 
 const Heading = styled.h1`
   margin: 0;
-  margin-top: 60px;
   margin-bottom: 5px;
-  margin-left: 34px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333333;
 `;
 
 const Heading2 = styled.h1`
   margin: 0;
-  margin-top: 0px;
   margin-bottom: 5px;
-  margin-left: 34px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #555555;
 `;
 
 const Text = styled.p`
   margin-bottom: 30px;
-  margin-left: 34px;
+  font-size: 16px;
+  color: #777777;
 `;
 
 const StudyLabel = styled.span`
   position: absolute;
-  top: 34px;
-  left: 16px;
-  background-color: black;
-  color: white;
+  top: 10px;
+  left: 10px;
+  background-color: #000000;
+  color: #ffffff;
   padding: 4px 8px;
   border-radius: 5px;
-  margin-left: 34px;
-`;
-
-const RoundedRectangle = styled.div`
-  position: absolute;
-  width: 700px;
-  height: 194px;
-  left: 20px;
-  top: 300px;
-  background: #ffffff;
-  box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.15);
-  border-radius: 40px;
-  margin-bottom: 20px;
-  margin-left: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  h3 {
-    font-weight: 300;
-    text-align: left;
-    margin-bottom: 5px;
-    margin-left: 60px;
-    margin-top: 10px;
-  }
-  h2 {
-    margin-top: 0px;
-    font-weight: 600;
-    text-align: left;
-    margin-left: 60px;
-  }
-`;
-
-const RoundedRectangle2 = styled.div`
-  position: absolute;
-  width: 700px;
-  height: 194px;
-  left: 740px;
-  top: 300px;
-  background: #ffffff;
-  box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.15);
-  border-radius: 40px;
-  margin-bottom: 20px;
-  margin-left: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  h3 {
-    font-weight: 300;
-    text-align: left;
-    margin-bottom: 5px;
-    margin-left: 60px;
-    margin-top: 10px;
-  }
-  h2 {
-    margin-top: 0px;
-    font-weight: 600;
-    text-align: left;
-    margin-left: 60px;
-  }
-`;
-
-const ReservationLink = styled(Link)`
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
+  font-size: 12px;
+  font-weight: 500;
 `;
 
 const BannerSlider: React.FC = () => {
@@ -144,24 +97,8 @@ const BannerSlider: React.FC = () => {
     slidesToScroll: 1,
   };
 
-  const handleReservationClick = async () => {
-    try {
-      const data = await checkLoginStatus();
-      const isLoggedIn = data.loggedIn;
-
-      if (!isLoggedIn) {
-        window.location.href = '/login';
-      } else {
-        window.location.href = '/select';
-      }
-    } catch (error) {
-      console.error('로그인 상태 확인 중 에러:', error);
-      window.location.href = '/login';
-    }
-  };
-
   return (
-    <Banner>
+    <Container>
       <StyledSlider {...settings}>
         <Background>
           <StudyLabel>project</StudyLabel>
@@ -176,17 +113,7 @@ const BannerSlider: React.FC = () => {
           <Text>SF5</Text>
         </Background>
       </StyledSlider>
-      <ReservationLink to="/select" onClick={handleReservationClick}>
-        <RoundedRectangle>
-          <h3>스마트하게</h3>
-          <h2>동아리방 예약</h2>
-        </RoundedRectangle>
-      </ReservationLink>
-      <RoundedRectangle2>
-        <h3>필독!</h3>
-        <h2>공지사항 확인</h2>
-      </RoundedRectangle2>
-    </Banner>
+    </Container>
   );
 };
 

@@ -6,22 +6,53 @@ import { fetchNoticeBoards } from '../util/api';
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 100%;
+  align-items: center;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  background-color: #f5f5f7;
+  min-height: 100vh;
+  position: relative;
+`;
+
+const WriteButton = styled.button`
+  padding: 12px 24px;
+  background-color: #0071e3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  transition: background-color 0.3s;
+  z-index: 1000;
+
+  &:hover {
+    background-color: #005bb5;
+  }
 `;
 
 const Box = styled.div`
   width: 100%;
-  height: 180px;
+  max-width: 800px;
   background-color: #ffffff;
   border: 1px solid #e4e4e4;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: 10px;
+  padding: 20px;
   margin-bottom: 20px;
+  border-radius: 10px;
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
+
+  &:hover {
+    background-color: #f0f0f5;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  }
 `;
 
 const StyledLink = styled(Link)`
@@ -31,33 +62,16 @@ const StyledLink = styled(Link)`
 
 const Title = styled.div`
   font-weight: bold;
-  color: #000000;
-  font-size: 18px;
+  color: #333333;
+  font-size: 24px;
   margin-bottom: 10px;
   text-align: left;
-  margin-top: 10px;
-  margin-left: 10px;
 `;
 
 const Content = styled.div`
   color: #575757;
-  font-size: 14px;
+  font-size: 16px;
   text-align: left;
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-`;
-
-const WriteButton = styled.button`
-  padding: 10px 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
-  width: calc(33.333% - 14px);
-  margin-right: 0;
 `;
 
 interface BoardItem {
@@ -151,25 +165,23 @@ const NoticePage: React.FC = () => {
   };
 
   return (
-    <>
-      <PageContainer>
-        <WriteButton onClick={handleWriteClick}>Write Post</WriteButton>
-        {data.length > 0 ? (
-          data.map((item) => (
-            <StyledLink to={`/Post/${item.boardId}`} key={item.boardId}>
-              <Box>
-                <Title>{item.title}</Title>
-                <Content>{item.context}</Content>
-              </Box>
-            </StyledLink>
-          ))
-        ) : (
-          <p>No posts available.</p>
-        )}
-        {loading && <p>Loading...</p>}
-        {hasMore && <div ref={lastElementRef} />}
-      </PageContainer>
-    </>
+    <PageContainer>
+      <WriteButton onClick={handleWriteClick}>글쓰기</WriteButton>
+      {data.length > 0 ? (
+        data.map((item) => (
+          <StyledLink to={`/Post/${item.boardId}`} key={item.boardId}>
+            <Box>
+              <Title>{item.title}</Title>
+              <Content>{item.context}</Content>
+            </Box>
+          </StyledLink>
+        ))
+      ) : (
+        <p>No posts available.</p>
+      )}
+      {loading && <p>Loading...</p>}
+      {hasMore && <div ref={lastElementRef} />}
+    </PageContainer>
   );
 };
 

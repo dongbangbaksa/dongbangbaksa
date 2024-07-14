@@ -3,63 +3,64 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const StyledReservationPage = styled.div`
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  width: 100%;
-  height: 100%;
   display: flex;
-  color: #ffffff;
-  overflow: hidden;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh; /* 전체 화면 높이를 차지하도록 설정 */
+  background-color: #f5f5f7; /* 애플 웹사이트 배경 색상 */
+  color: #000000; /* 텍스트 색상 */
 `;
 
 const WhiteBox = styled.div`
-  position: relative;
-  width: 280px;
-  height: 400px;
+  width: 90%;
+  max-width: 600px;
   background: #ffffff;
-  box-shadow: 4.00406px 4.00406px 40.0406px rgba(0, 0, 0, 0.15);
-  border-radius: 40.0406px;
-  margin-top: 200px;
-  margin-left: 140px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1); /* 그림자 설정 */
+  border-radius: 20px; /* 둥근 모서리 설정 */
   padding: 20px;
-  margin-bottom: 110px;
+  margin-bottom: 20px; /* 아래쪽 여백 */
+  text-align: left;
 `;
 
 const TitleText = styled.div`
-  font-family: 'Inter';
-  font-style: normal;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 600;
-  font-size: 28px;
-  color: #000000;
-  margin-top: 30px;
-  margin-left: 20px;
+  font-size: 24px;
+  color: #333333;
+  margin-bottom: 10px;
 `;
 
 const AdditionalText = styled.div`
-  font-family: 'Inter';
-  font-style: normal;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 400;
-  font-size: 18px;
-  color: #000000;
-  margin-top: 30px;
-  margin-left: 20px;
-  margin-right: 20px;
+  font-size: 16px;
+  color: #555555;
+  line-height: 1.5;
 `;
 
 const ReserveText = styled.div`
-  position: absolute;
-  top: 110px;
-  left: 140px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 28px;
   font-weight: 300;
+  color: #333333;
+  margin-bottom: 40px;
+  text-align: center;
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `;
 
 const SelectPage: React.FC = () => {
   return (
     <StyledReservationPage>
       <ReserveText>예약</ReserveText>
-      <Link to="/reservation">
+      <StyledLink to="/reservation">
         <WhiteBox>
           <TitleText>Palo Alto</TitleText>
           <AdditionalText>
@@ -67,7 +68,7 @@ const SelectPage: React.FC = () => {
             북부의 도시의 이름에서 따온 방입니다.
           </AdditionalText>
         </WhiteBox>
-      </Link>
+      </StyledLink>
     </StyledReservationPage>
   );
 };

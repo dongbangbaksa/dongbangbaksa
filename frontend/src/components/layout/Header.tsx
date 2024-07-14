@@ -5,7 +5,12 @@ import { useRecoilState } from 'recoil';
 import { accessTokenState } from '../../recoil/recoilState';
 
 const StyledHeaderBorder = styled.div`
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #e0e0e0;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  background-color: #ffffff;
 `;
 
 const StyledHeader = styled.div`
@@ -13,21 +18,27 @@ const StyledHeader = styled.div`
   justify-content: center;
   align-items: center;
   background-color: #ffffff;
-  font-size: 20px;
+  font-size: 16px;
   width: 100%;
+  height: 64px;
+  font-weight: 500;
 `;
 
 const StyledNav = styled.nav`
   ul {
     list-style: none;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     padding: 0;
+    margin: 0;
     li {
-      margin: 0 30px;
+      margin: 0 20px;
       a {
-        color: black;
+        color: #333333;
         text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }
@@ -37,7 +48,6 @@ const Header = () => {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   const navigate = useNavigate();
 
-  // 로컬 스토리지에서 accessToken을 가져와 설정
   useEffect(() => {
     const storedToken = localStorage.getItem('accessToken');
     if (storedToken) {
@@ -45,10 +55,7 @@ const Header = () => {
     }
   }, [setAccessToken]);
 
-  // handleReservationClick에서 액세스 토큰을 콘솔 로그에 출력
   const handleReservationClick = () => {
-    console.log('Access Token:', accessToken);
-    // 액세스 토큰이 없으면 로그인 페이지로 이동
     if (!accessToken) {
       navigate('/Login');
     } else {
@@ -74,9 +81,6 @@ const Header = () => {
             </li>
             <li>
               <Link to="/Notice">Notice</Link>
-            </li>
-            <li>
-              <Link to="/Community">Community</Link>
             </li>
             {accessToken ? (
               <li>
