@@ -51,7 +51,7 @@ export const signInUser = async (email: string, password: string) => {
 // 예약 정보 조회 API 호출 함수
 export const fetchReservations = async () => {
   try {
-    const response = await axiosInstance.get('/api/reservation/check');
+    const response = await axiosInstance.get('/api/reservation/all');
     return response.data;
   } catch (error) {
     throw error;
@@ -70,7 +70,7 @@ export const deleteReservation = async (id: number) => {
 // 로그아웃 API 호출 함수
 export const signOutUser = async () => {
   try {
-    await axiosInstance.post('/api/users/signout');
+    await axiosInstance.post('/api/users/sign-out');
   } catch (error) {
     throw error;
   }
