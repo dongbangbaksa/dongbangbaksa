@@ -135,3 +135,13 @@ export const createPost = async (formData: FormData) => {
     throw error;
   }
 };
+
+// 유저 정보 조회 API 호출 함수
+export const fetchUserInfo = async () => {
+  const response = await axiosInstance.get('/api/user/info', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+    },
+  });
+  return response.data;
+};

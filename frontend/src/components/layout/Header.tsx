@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
-import { accessTokenState } from '../../recoil/recoilState';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { accessTokenState, isLoggedInState, userInfoState } from '../../recoil/recoilState';
+import { fetchUserInfo } from '../../util/api';
 
 const StyledHeaderBorder = styled.div`
   border-bottom: 1px solid #e0e0e0;
@@ -46,14 +47,26 @@ const StyledNav = styled.nav`
 
 const Header = () => {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
+  const [userInfo, setUserInfo] = useRecoilState(userInfoState);
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = localStorage.getItem('accessToken');
     if (storedToken) {
       setAccessToken(storedToken);
+      fetchUserInfo()
+        .then((data) => {
+          setUserInfo(data);
+          setIsLoggedIn(true);
+        })
+        .catch(() => {
+          setIsLoggedIn(false);
+        });
+    } else {
+      setIsLoggedIn(false);
     }
-  }, [setAccessToken]);
+  }, [setAccessToken, setIsLoggedIn, setUserInfo]);
 
   const handleReservationClick = () => {
     if (!accessToken) {
