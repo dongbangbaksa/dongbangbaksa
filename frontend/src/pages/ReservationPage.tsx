@@ -17,21 +17,21 @@ const ReservationPageWrapper = styled.div`
   justify-content: center;
   width: 100%;
   height: 100vh;
-  background-color: #f5f5f7; /* 애플 웹사이트 배경 색상 */
+  background-color: #f5f5f7;
   padding: 20px;
 `;
 
 const ContentWrapper = styled.div`
   display: flex;
-  align-items: flex-start; /* 변경: 위에서 시작하도록 */
-  justify-content: space-between; /* 변경: 공간을 고르게 분배 */
+  align-items: flex-start;
+  justify-content: space-between;
   width: 100%;
-  max-width: 1200px; /* 중앙 정렬을 위한 최대 너비 */
+  max-width: 1200px;
   margin-top: 20px;
 
   @media (max-width: 768px) {
     flex-direction: column;
-    align-items: center; /* 모바일에서 중앙 정렬 */
+    align-items: center;
   }
 `;
 
@@ -49,11 +49,11 @@ const Title = styled.h1`
 
 const CalendarSelectContainer = styled.div`
   flex: 1;
-  margin-right: 40px; /* 오른쪽 여백 추가 */
+  margin-right: 40px;
 
   @media (max-width: 768px) {
     margin-right: 0;
-    margin-bottom: 20px; /* 모바일에서 아래 여백 추가 */
+    margin-bottom: 20px;
   }
 `;
 
@@ -87,13 +87,13 @@ const ButtonContainer = styled.div`
 
 const Button = styled.button`
   border: none;
-  background-color: #0071e3; /* 애플 웹사이트 스타일 버튼 색상 */
+  background-color: #0071e3;
   color: #ffffff;
   font-size: 18px;
   font-weight: bold;
   height: 40px;
   width: 200px;
-  border-radius: 20px; /* 둥근 모서리 설정 */
+  border-radius: 20px;
   cursor: pointer;
   transition:
     background-color 0.3s,
