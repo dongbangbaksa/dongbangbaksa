@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Modal from '../components/Modal';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import { isLoggedInState } from '../recoil/recoilState';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { isLoggedInState, accessTokenState } from '../recoil/recoilState';
 import { fetchReservations, deleteReservation, signOutUser } from '../util/api';
 
 const PageContainer = styled.div`
@@ -111,6 +111,7 @@ const MyPage: React.FC = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>(null);
   const [, setIsLoggedIn] = useRecoilState(isLoggedInState);
+  const accessToken = useRecoilValue(accessTokenState);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -126,12 +127,19 @@ const MyPage: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await signOutUser();
+      if (!accessToken) {
+        throw new Error('로그아웃 중 오류가 발생했습니다.');
+      }
+      await signOutUser(accessToken);
       setIsLogoutModalOpen(true);
       setModalContent('로그아웃이 완료 되었습니다.');
       setIsLoggedIn(false);
-    } catch (error) {
-      console.error('로그아웃 실패', error);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+    } catch (error: any) {
+      console.error('로그아웃 실패:', error.message);
+      setModalContent(error.message);
+      setIsLogoutModalOpen(true);
     }
   };
 
