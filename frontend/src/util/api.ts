@@ -1,6 +1,4 @@
 import axiosInstance from './axiosConfig';
-import { accessTokenState, refreshTokenState, isLoggedInState } from '../recoil/recoilState';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 // 로그인 상태 확인 API 호출 함수
 export const checkLoginStatus = async (): Promise<{ loggedIn: boolean }> => {
@@ -73,7 +71,7 @@ export const deleteReservation = async (id: number) => {
 export const signOutUser = async (accessToken: string) => {
   try {
     await axiosInstance.post(
-      '/api/users/sign-out',
+      '/api/user/sign-out',
       {},
       {
         headers: {
