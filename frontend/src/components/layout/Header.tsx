@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { accessTokenState, isLoggedInState, userInfoState } from '../../recoil/recoilState';
-import { fetchUserInfo } from '../../util/api';
+import { useRecoilState } from 'recoil';
+import { accessTokenState, isLoggedInState } from '../../recoil/recoilState';
 
 const StyledHeaderBorder = styled.div`
   border-bottom: 1px solid #e0e0e0;
@@ -47,26 +46,18 @@ const StyledNav = styled.nav`
 
 const Header = () => {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
-  const [userInfo, setUserInfo] = useRecoilState(userInfoState);
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = localStorage.getItem('accessToken');
     if (storedToken) {
       setAccessToken(storedToken);
-      fetchUserInfo()
-        .then((data) => {
-          setUserInfo(data);
-          setIsLoggedIn(true);
-        })
-        .catch(() => {
-          setIsLoggedIn(false);
-        });
+      setIsLoggedIn(true); // 로그인 상태 설정
     } else {
-      setIsLoggedIn(false);
+      setIsLoggedIn(false); // 로그아웃 상태 설정
     }
-  }, [setAccessToken, setIsLoggedIn, setUserInfo]);
+  }, [setAccessToken, setIsLoggedIn]);
 
   const handleReservationClick = () => {
     if (!accessToken) {
@@ -95,7 +86,7 @@ const Header = () => {
             <li>
               <Link to="/Notice">Notice</Link>
             </li>
-            {accessToken ? (
+            {isLoggedIn ? (
               <li>
                 <Link to="/Mypage">Mypage</Link>
               </li>

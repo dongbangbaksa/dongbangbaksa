@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Modal from '../components/Modal';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { isLoggedInState, accessTokenState } from '../recoil/recoilState';
+import { useRecoilState } from 'recoil';
+import { isLoggedInState, accessTokenState, refreshTokenState } from '../recoil/recoilState';
 import { fetchReservations, deleteReservation, signOutUser } from '../util/api';
 
 const PageContainer = styled.div`
@@ -111,7 +111,8 @@ const MyPage: React.FC = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>(null);
   const [, setIsLoggedIn] = useRecoilState(isLoggedInState);
-  const accessToken = useRecoilValue(accessTokenState);
+  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+  const [, setRefreshToken] = useRecoilState(refreshTokenState);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,15 +128,18 @@ const MyPage: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      if (!accessToken) {
-        throw new Error('로그아웃 중 오류가 발생했습니다.');
+      if (accessToken) {
+        await signOutUser(accessToken);
+        setIsLogoutModalOpen(true);
+        setModalContent('로그아웃이 완료 되었습니다.');
+        setIsLoggedIn(false);
+        setAccessToken(null);
+        setRefreshToken(null);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+      } else {
+        throw new Error('Access token not available');
       }
-      await signOutUser(accessToken);
-      setIsLogoutModalOpen(true);
-      setModalContent('로그아웃이 완료 되었습니다.');
-      setIsLoggedIn(false);
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
     } catch (error: any) {
       console.error('로그아웃 실패:', error.message);
       setModalContent(error.message);
