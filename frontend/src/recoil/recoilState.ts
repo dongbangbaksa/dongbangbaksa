@@ -22,3 +22,8 @@ export const refreshTokenState = atom({
   key: 'refreshTokenState',
   default: initialRefreshToken,
 });
+
+export const userInfoState = atom({
+  key: 'userInfoState',
+  default: null,
+});

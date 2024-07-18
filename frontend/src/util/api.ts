@@ -51,7 +51,7 @@ export const signInUser = async (email: string, password: string) => {
 // 예약 정보 조회 API 호출 함수
 export const fetchReservations = async () => {
   try {
-    const response = await axiosInstance.get('/api/reservation/check');
+    const response = await axiosInstance.get('/api/reservation/all');
     return response.data;
   } catch (error) {
     throw error;
@@ -68,11 +68,31 @@ export const deleteReservation = async (id: number) => {
 };
 
 // 로그아웃 API 호출 함수
-export const signOutUser = async () => {
+export const signOutUser = async (accessToken: string) => {
   try {
-    await axiosInstance.post('/api/users/signout');
-  } catch (error) {
-    throw error;
+    await axiosInstance.post(
+      '/api/user/sign-out',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+  } catch (error: any) {
+    if (error.response) {
+      // 서버 응답이 있는 경우
+      console.error('Logout error response:', error.response.status, error.response.data);
+      throw new Error(error.response.data.message || '로그아웃 중 오류가 발생했습니다.');
+    } else if (error.request) {
+      // 요청이 전송되었으나 응답이 없는 경우
+      console.error('Logout error request:', error.request);
+      throw new Error('로그아웃 요청이 서버에 도달하지 못했습니다.');
+    } else {
+      // 요청을 설정하는 중에 오류가 발생한 경우
+      console.error('Logout error:', error.message);
+      throw new Error(error.message);
+    }
   }
 };
 
@@ -134,4 +154,14 @@ export const createPost = async (formData: FormData) => {
   } catch (error) {
     throw error;
   }
+};
+
+// 유저 정보 조회 API 호출 함수
+export const fetchUserInfo = async () => {
+  const response = await axiosInstance.get('/api/user/info', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+    },
+  });
+  return response.data;
 };

@@ -10,8 +10,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: #f5f5f7; /* 애플 웹사이트 배경 색상 */
-
+  background-color: #f5f5f7;
   @media (max-width: 768px) {
     padding: 0 20px;
   }
@@ -44,7 +43,7 @@ const Background = styled.div`
   align-items: flex-start;
   justify-content: center;
   text-align: left;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1); /* 그림자 설정 */
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
     max-width: 100%;

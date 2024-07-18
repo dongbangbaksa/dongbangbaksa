@@ -4,16 +4,16 @@ import styled from 'styled-components';
 const IntroContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center; /* 중앙 정렬 */
-  justify-content: center; /* 중앙 정렬 */
+  align-items: center;
+  justify-content: center;
   height: 80vh;
   padding: 20px;
-  background-color: #f5f5f7; /* 애플 웹사이트 배경 색상 */
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* 폰트 설정 */
+  background-color: #f5f5f7;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   @media (max-width: 768px) {
-    padding: 20px 10px; /* 모바일 패딩 조정 */
-    text-align: center; /* 모바일 텍스트 중앙 정렬 */
+    padding: 20px 10px;
+    text-align: center;
   }
 `;
 
@@ -24,10 +24,10 @@ interface IntroTextProps {
 
 const IntroText = styled.div<IntroTextProps>`
   font-size: ${(props) => props.size || 'inherit'};
-  text-align: center; /* 텍스트 중앙 정렬 */
+  text-align: center;
   margin: 10px;
-  color: ${(props) => props.color || '#333333'}; /* 기본 색상 설정 */
-  font-weight: ${(props) => (props.size === '36px' ? '600' : '400')}; /* 헤딩과 본문 폰트 웨이트 설정 */
+  color: ${(props) => props.color || '#333333'};
+  font-weight: ${(props) => (props.size === '36px' ? '600' : '400')};
 `;
 
 const AboutPage: React.FC = () => {

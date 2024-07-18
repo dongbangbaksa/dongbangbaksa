@@ -8,19 +8,19 @@ const StyledReservationPage = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100vh; /* 전체 화면 높이를 차지하도록 설정 */
-  background-color: #f5f5f7; /* 애플 웹사이트 배경 색상 */
-  color: #000000; /* 텍스트 색상 */
+  height: 100vh;
+  background-color: #f5f5f7;
+  color: #000000;
 `;
 
 const WhiteBox = styled.div`
   width: 90%;
   max-width: 600px;
   background: #ffffff;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1); /* 그림자 설정 */
-  border-radius: 20px; /* 둥근 모서리 설정 */
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
   padding: 20px;
-  margin-bottom: 20px; /* 아래쪽 여백 */
+  margin-bottom: 20px;
   text-align: left;
 `;
 
