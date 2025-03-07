@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MainPage from './pages/MainPage';
 import Header from './components/layout/Header';
 import NoticePage from './pages/NoticePage';
@@ -32,29 +33,34 @@ const Content = styled.div`
   background-color: #f5f5f7;
 `;
 
+// QueryClient 인스턴스 생성
+const queryClient = new QueryClient();
+
 const App: React.FC = () => {
   return (
     <RecoilRoot>
-      <Router>
-        <AppContainer>
-          <Header />
-          <Content>
-            <Routes>
-              <Route path="/" element={<MainPage />} />
-              <Route path="/main" element={<MainPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/reservation" element={<ReservationPage />} />
-              <Route path="/select" element={<SelectPage />} />
-              <Route path="/notice" element={<NoticePage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/join" element={<JoinPage />} />
-              <Route path="/mypage" element={<MyPage />} />
-              <Route path="/writepage" element={<WritePage />} />
-              <Route path="/post/:id" element={<PostPage />} />
-            </Routes>
-          </Content>
-        </AppContainer>
-      </Router>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <AppContainer>
+            <Header />
+            <Content>
+              <Routes>
+                <Route path="/" element={<MainPage />} />
+                <Route path="/main" element={<MainPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/reservation" element={<ReservationPage />} />
+                <Route path="/select" element={<SelectPage />} />
+                <Route path="/notice" element={<NoticePage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/join" element={<JoinPage />} />
+                <Route path="/mypage" element={<MyPage />} />
+                <Route path="/writepage" element={<WritePage />} />
+                <Route path="/post/:id" element={<PostPage />} />
+              </Routes>
+            </Content>
+          </AppContainer>
+        </Router>
+      </QueryClientProvider>
     </RecoilRoot>
   );
 };
