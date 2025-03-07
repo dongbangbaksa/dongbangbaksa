@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
 import styled from 'styled-components';
-import TimeSelect from '../components/TimeSelect';
+import DateTimePicker from '../pages/DateTimePicker';
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../components/Modal';
@@ -47,7 +45,7 @@ const Title = styled.h1`
   margin: 0;
 `;
 
-const CalendarSelectContainer = styled.div`
+const DateTimeSelectContainer = styled.div`
   flex: 1;
   margin-right: 40px;
 
@@ -107,9 +105,8 @@ const ReservationPage: React.FC = () => {
   const navigate = useNavigate();
   const accessToken = useRecoilValue(accessTokenState); // Recoil 상태에서 accessToken을 가져옴
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [startTime, setStartTime] = useState<string>('');
-  const [endTime, setEndTime] = useState<string>('');
+  const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
+  const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
   const [selectedMembers, setSelectedMembers] = useState<{ value: number; label: string } | null>({
     value: 0,
     label: '0명',
@@ -118,44 +115,66 @@ const ReservationPage: React.FC = () => {
 
   const membersOptions = Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: `${i + 1}명` }));
 
-  const handleDateChange = (date: Date | Date[] | null) => {
-    setSelectedDate(date as Date | null);
+  const handleStartDateChange = (date: Date | null) => {
+    setSelectedStartDate(date);
+  };
+
+  const handleEndDateChange = (date: Date | null) => {
+    setSelectedEndDate(date);
   };
 
   const handleReservation = async () => {
-    if (selectedDate && startTime && endTime && selectedMembers?.value !== undefined) {
-      const reservationStartTime = new Date(selectedDate);
-      reservationStartTime.setHours(Number(startTime.split(':')[0]), Number(startTime.split(':')[1]), 1);
-      const reservationEndTime = new Date(selectedDate);
-      reservationEndTime.setHours(Number(endTime.split(':')[0]), Number(endTime.split(':')[1]));
+    if (selectedStartDate && selectedEndDate && selectedMembers?.value !== undefined) {
+      // 예약 시간이 올바른지 확인 (시작 시간이 종료 시간보다 이전이어야 함)
+      if (selectedStartDate >= selectedEndDate) {
+        alert('예약 시작 시간은 종료 시간보다 이전이어야 합니다.');
+        return;
+      }
 
-      // 한국 시간으로 변환
-      const koreanTimeZoneOffset = 9 * 60;
-      reservationStartTime.setMinutes(reservationStartTime.getMinutes() + koreanTimeZoneOffset);
-      reservationEndTime.setMinutes(reservationEndTime.getMinutes() + koreanTimeZoneOffset);
+      // 예약 시작 시간의 초 값을 1로 설정
+      const adjustedStartDate = new Date(selectedStartDate);
+      adjustedStartDate.setSeconds(1);
 
-      // ISO 문자열 생성 후 .000Z 제거
-      const isoStartTime = reservationStartTime.toISOString().replace(/\.000Z$/, '');
-      const isoEndTime = reservationEndTime.toISOString().replace(/\.000Z$/, '');
+      // 날짜와 시간을 'YYYY-MM-DDTHH:MM:SS' 형식의 문자열로 변환
+      const formatDateTime = (date: Date | null): string => {
+        if (!date) return '';
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+      };
+
+      const formattedStartTime = formatDateTime(adjustedStartDate);
+      const formattedEndTime = formatDateTime(selectedEndDate);
+
+      // 예약 데이터 객체 생성
+      const reservationData = {
+        reservationStartTime: formattedStartTime,
+        reservationEndTime: formattedEndTime,
+        members: selectedMembers.value,
+        meetingRoomId: 1, // 예시로 1번 회의실로 설정
+      };
+
+      // 예약 데이터 확인을 위한 콘솔 로그
+      console.log('예약 데이터:', reservationData);
+
       try {
-        const response = await createReservation({
-          reservationStartTime: isoStartTime,
-          reservationEndTime: isoEndTime,
-          members: selectedMembers.value,
-          meetingRoomId: 1,
-        });
+        const response = await createReservation(reservationData);
 
         if (response.status === 201) {
-          console.log('예약에 성공 했습니다.');
+          console.log('예약에 성공했습니다.');
           setReservationModalOpen(true);
         } else {
-          console.error('예약에 실패 했습니다.');
+          console.error('예약에 실패했습니다.');
         }
       } catch (error) {
-        console.error('예약에 실패 했습니다.:', error);
+        console.error('예약에 실패했습니다:', error);
       }
     } else {
-      console.error('모든 요소를 선택 해주세요.');
+      console.error('모든 요소를 선택해주세요.');
     }
   };
 
@@ -177,29 +196,16 @@ const ReservationPage: React.FC = () => {
         <Title>Palo Alto 예약하기</Title>
       </HeaderSection>
       <ContentWrapper>
-        <CalendarSelectContainer>
-          <Calendar
-            onChange={handleDateChange}
-            value={selectedDate}
-            formatDay={(_, date) => (date instanceof Date ? date.getDate().toString() : '')}
+        <DateTimeSelectContainer>
+          <DateTimePicker
+            selectedStartDate={selectedStartDate}
+            selectedEndDate={selectedEndDate}
+            onStartDateChange={handleStartDateChange}
+            onEndDateChange={handleEndDateChange}
           />
-        </CalendarSelectContainer>
+        </DateTimeSelectContainer>
         <TimeSelectContainer>
-          <Notice>* 캘린더에서 날짜를 먼저 선택해주세요.</Notice>
-          <SelectWrapper>
-            <TimeSelect
-              value={startTime}
-              onChange={(selectedTime: string) => setStartTime(selectedTime)}
-              label="예약 시작 시간을 선택하세요."
-            />
-          </SelectWrapper>
-          <SelectWrapper>
-            <TimeSelect
-              value={endTime}
-              onChange={(selectedTime: string) => setEndTime(selectedTime)}
-              label="예약 종료 시간을 선택하세요."
-            />
-          </SelectWrapper>
+          <Notice>* 날짜와 시간을 모두 선택해주세요.</Notice>
           <SelectWrapper>
             <label>인원을 선택하세요.</label>
             <Select
