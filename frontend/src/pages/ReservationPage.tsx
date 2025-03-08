@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import Select from 'react-select';
 import { useMutation } from 'react-query';
 
-import Modal from '../components/Modal';
-import DateTimePicker from '../pages/DateTimePicker';
 import { accessTokenState } from '../recoil/recoilState';
 import { createReservation } from '../util/api';
 import {
@@ -21,8 +19,11 @@ import {
   Button,
 } from './styled';
 
+// Lazy load Modal and DateTimePicker
+const Modal = lazy(() => import('../components/Modal'));
+const DateTimePicker = lazy(() => import('../pages/DateTimePicker'));
+
 const ReservationPage: React.FC = () => {
-  console.log('렌더링됨');
   const navigate = useNavigate();
   const accessToken = useRecoilValue(accessTokenState);
 
@@ -102,27 +103,32 @@ const ReservationPage: React.FC = () => {
 
   return (
     <ReservationPageWrapper>
-      <Modal isOpen={isReservationModalOpen} onClose={() => setReservationModalOpen(false)}>
-        <div>
-          <p>예약이 완료 되었습니다.</p>
-        </div>
-      </Modal>
-      <Modal isOpen={isErrorModalOpen} onClose={() => setErrorModalOpen(false)}>
-        <div>
-          <p>예약에 실패했습니다. 다시 시도해주세요.</p>
-        </div>
-      </Modal>
+      <Suspense fallback={<div>Loading Modal...</div>}>
+        <Modal isOpen={isReservationModalOpen} onClose={() => setReservationModalOpen(false)}>
+          <div>
+            <p>예약이 완료 되었습니다.</p>
+          </div>
+        </Modal>
+        <Modal isOpen={isErrorModalOpen} onClose={() => setErrorModalOpen(false)}>
+          <div>
+            <p>예약에 실패했습니다. 다시 시도해주세요.</p>
+          </div>
+        </Modal>
+      </Suspense>
+
       <HeaderSection>
         <Title>Palo Alto 예약하기</Title>
       </HeaderSection>
       <ContentWrapper>
         <DateTimeSelectContainer>
-          <DateTimePicker
-            selectedStartDate={selectedStartDate}
-            selectedEndDate={selectedEndDate}
-            onStartDateChange={handleStartDateChange}
-            onEndDateChange={handleEndDateChange}
-          />
+          <Suspense fallback={<div>Loading DateTimePicker...</div>}>
+            <DateTimePicker
+              selectedStartDate={selectedStartDate}
+              selectedEndDate={selectedEndDate}
+              onStartDateChange={handleStartDateChange}
+              onEndDateChange={handleEndDateChange}
+            />
+          </Suspense>
         </DateTimeSelectContainer>
         <TimeSelectContainer>
           <Notice>* 날짜와 시간을 모두 선택해주세요.</Notice>
