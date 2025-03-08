@@ -1,109 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import DateTimePicker from '../pages/DateTimePicker';
-import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
-import Modal from '../components/Modal';
 import { useRecoilValue } from 'recoil';
+import Select from 'react-select';
+
+import Modal from '../components/Modal';
+import DateTimePicker from '../pages/DateTimePicker';
 import { accessTokenState } from '../recoil/recoilState';
 import { createReservation } from '../util/api';
-
-const ReservationPageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100vh;
-  background-color: #f5f5f7;
-  padding: 20px;
-`;
-
-const ContentWrapper = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 1200px;
-  margin-top: 20px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-  }
-`;
-
-const HeaderSection = styled.div`
-  text-align: center;
-  margin-bottom: 40px;
-`;
-
-const Title = styled.h1`
-  font-size: 36px;
-  font-weight: bold;
-  color: #333333;
-  margin: 0;
-`;
-
-const DateTimeSelectContainer = styled.div`
-  flex: 1;
-  margin-right: 40px;
-
-  @media (max-width: 768px) {
-    margin-right: 0;
-    margin-bottom: 20px;
-  }
-`;
-
-const TimeSelectContainer = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  max-width: 300px;
-  width: 100%;
-`;
-
-const SelectWrapper = styled.div`
-  width: 100%;
-  margin-top: 20px;
-`;
-
-const Notice = styled.div`
-  margin-bottom: 15px;
-  color: #7b7b7b;
-  font-size: 14px;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-  width: 100%;
-`;
-
-const Button = styled.button`
-  border: none;
-  background-color: #0071e3;
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: bold;
-  height: 40px;
-  width: 200px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition:
-    background-color 0.3s,
-    color 0.3s;
-  &:hover {
-    background-color: #005bb5;
-  }
-`;
+import {
+  ReservationPageWrapper,
+  ContentWrapper,
+  HeaderSection,
+  Title,
+  DateTimeSelectContainer,
+  TimeSelectContainer,
+  SelectWrapper,
+  Notice,
+  ButtonContainer,
+  Button,
+} from './style';
 
 const ReservationPage: React.FC = () => {
   const navigate = useNavigate();
-  const accessToken = useRecoilValue(accessTokenState); // Recoil 상태에서 accessToken을 가져옴
+  const accessToken = useRecoilValue(accessTokenState);
 
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
@@ -125,17 +44,14 @@ const ReservationPage: React.FC = () => {
 
   const handleReservation = async () => {
     if (selectedStartDate && selectedEndDate && selectedMembers?.value !== undefined) {
-      // 예약 시간이 올바른지 확인 (시작 시간이 종료 시간보다 이전이어야 함)
       if (selectedStartDate >= selectedEndDate) {
         alert('예약 시작 시간은 종료 시간보다 이전이어야 합니다.');
         return;
       }
 
-      // 예약 시작 시간의 초 값을 1로 설정
       const adjustedStartDate = new Date(selectedStartDate);
       adjustedStartDate.setSeconds(1);
 
-      // 날짜와 시간을 'YYYY-MM-DDTHH:MM:SS' 형식의 문자열로 변환
       const formatDateTime = (date: Date | null): string => {
         if (!date) return '';
         const year = date.getFullYear();
@@ -150,15 +66,13 @@ const ReservationPage: React.FC = () => {
       const formattedStartTime = formatDateTime(adjustedStartDate);
       const formattedEndTime = formatDateTime(selectedEndDate);
 
-      // 예약 데이터 객체 생성
       const reservationData = {
         reservationStartTime: formattedStartTime,
         reservationEndTime: formattedEndTime,
         members: selectedMembers.value,
-        meetingRoomId: 1, // 예시로 1번 회의실로 설정
+        meetingRoomId: 1,
       };
 
-      // 예약 데이터 확인을 위한 콘솔 로그
       console.log('예약 데이터:', reservationData);
 
       try {
@@ -179,7 +93,6 @@ const ReservationPage: React.FC = () => {
   };
 
   useEffect(() => {
-    // 로그인 상태 확인 및 리디렉션
     if (!accessToken) {
       navigate('/Login');
     }
