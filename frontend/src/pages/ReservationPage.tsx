@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import Select from 'react-select';
+import { useMutation } from 'react-query';
 
 import Modal from '../components/Modal';
 import DateTimePicker from '../pages/DateTimePicker';
@@ -18,9 +19,10 @@ import {
   Notice,
   ButtonContainer,
   Button,
-} from './style';
+} from './styled';
 
 const ReservationPage: React.FC = () => {
+  console.log('렌더링됨');
   const navigate = useNavigate();
   const accessToken = useRecoilValue(accessTokenState);
 
@@ -42,7 +44,27 @@ const ReservationPage: React.FC = () => {
     setSelectedEndDate(date);
   };
 
-  const handleReservation = async () => {
+  const formatDateTime = (date: Date | null): string => {
+    if (!date) return '';
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+  };
+
+  const mutation = useMutation(createReservation, {
+    onSuccess: () => {
+      setReservationModalOpen(true); // 예약 성공 시 모달 띄우기
+    },
+    onError: (error) => {
+      console.error('예약 실패:', error);
+    },
+  });
+
+  const handleReservation = () => {
     if (selectedStartDate && selectedEndDate && selectedMembers?.value !== undefined) {
       if (selectedStartDate >= selectedEndDate) {
         alert('예약 시작 시간은 종료 시간보다 이전이어야 합니다.');
@@ -51,17 +73,6 @@ const ReservationPage: React.FC = () => {
 
       const adjustedStartDate = new Date(selectedStartDate);
       adjustedStartDate.setSeconds(1);
-
-      const formatDateTime = (date: Date | null): string => {
-        if (!date) return '';
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        const seconds = date.getSeconds().toString().padStart(2, '0');
-        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-      };
 
       const formattedStartTime = formatDateTime(adjustedStartDate);
       const formattedEndTime = formatDateTime(selectedEndDate);
@@ -75,18 +86,7 @@ const ReservationPage: React.FC = () => {
 
       console.log('예약 데이터:', reservationData);
 
-      try {
-        const response = await createReservation(reservationData);
-
-        if (response.status === 201) {
-          console.log('예약에 성공했습니다.');
-          setReservationModalOpen(true);
-        } else {
-          console.error('예약에 실패했습니다.');
-        }
-      } catch (error) {
-        console.error('예약에 실패했습니다:', error);
-      }
+      mutation.mutate(reservationData); // 예약 요청
     } else {
       console.error('모든 요소를 선택해주세요.');
     }
@@ -137,7 +137,9 @@ const ReservationPage: React.FC = () => {
         </TimeSelectContainer>
       </ContentWrapper>
       <ButtonContainer>
-        <Button onClick={handleReservation}>예약하기</Button>
+        <Button onClick={handleReservation} disabled={mutation.isLoading}>
+          {mutation.isLoading ? '예약 중...' : '예약하기'}
+        </Button>
       </ButtonContainer>
     </ReservationPageWrapper>
   );

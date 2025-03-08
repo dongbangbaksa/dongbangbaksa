@@ -63,7 +63,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           dateFormat="yyyy-MM-dd HH:mm"
           timeFormat="HH:mm"
           timeIntervals={60} // 1시간 단위로 시간 선택
-          minDate={new Date()} // 오늘 날짜 이후로만 선택 가능
+          minDate={selectedStartDate || new Date()} // 시작 날짜 이후로만 종료 날짜 선택 가능
           timeCaption="시간"
           showPopperArrow={false}
         />

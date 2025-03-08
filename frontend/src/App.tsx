@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import MainPage from './pages/MainPage';
 import Header from './components/layout/Header';
 import NoticePage from './pages/NoticePage';
@@ -38,8 +38,10 @@ const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   return (
-    <RecoilRoot>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      {' '}
+      {/* QueryClientProvider를 가장 바깥에 두기 */}
+      <RecoilRoot>
         <Router>
           <AppContainer>
             <Header />
@@ -60,8 +62,8 @@ const App: React.FC = () => {
             </Content>
           </AppContainer>
         </Router>
-      </QueryClientProvider>
-    </RecoilRoot>
+      </RecoilRoot>
+    </QueryClientProvider>
   );
 };
 
