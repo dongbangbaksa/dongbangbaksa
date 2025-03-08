@@ -33,6 +33,7 @@ const ReservationPage: React.FC = () => {
     label: '0명',
   });
   const [isReservationModalOpen, setReservationModalOpen] = useState(false);
+  const [isErrorModalOpen, setErrorModalOpen] = useState(false);
 
   const membersOptions = Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: `${i + 1}명` }));
 
@@ -57,10 +58,11 @@ const ReservationPage: React.FC = () => {
 
   const mutation = useMutation(createReservation, {
     onSuccess: () => {
-      setReservationModalOpen(true); // 예약 성공 시 모달 띄우기
+      setReservationModalOpen(true);
     },
     onError: (error) => {
       console.error('예약 실패:', error);
+      setErrorModalOpen(true);
     },
   });
 
@@ -103,6 +105,11 @@ const ReservationPage: React.FC = () => {
       <Modal isOpen={isReservationModalOpen} onClose={() => setReservationModalOpen(false)}>
         <div>
           <p>예약이 완료 되었습니다.</p>
+        </div>
+      </Modal>
+      <Modal isOpen={isErrorModalOpen} onClose={() => setErrorModalOpen(false)}>
+        <div>
+          <p>예약에 실패했습니다. 다시 시도해주세요.</p>
         </div>
       </Modal>
       <HeaderSection>
