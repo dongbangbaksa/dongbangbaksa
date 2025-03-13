@@ -48,12 +48,13 @@ export const signInUser = async (email: string, password: string) => {
   }
 };
 
-// 예약 정보 조회 API 호출 함수
 export const fetchReservations = async () => {
   try {
     const response = await axiosInstance.get('/api/reservation/all');
+
     return response.data;
   } catch (error) {
+    console.error('예약 정보를 가져오는 중 에러 발생:', error);
     throw error;
   }
 };
