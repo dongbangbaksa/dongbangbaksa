@@ -5,39 +5,50 @@ import { useRecoilState } from 'recoil';
 import { accessTokenState, isLoggedInState } from '../../recoil/recoilState';
 
 const StyledHeaderBorder = styled.div`
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #333;
   width: 100%;
   position: fixed;
   top: 0;
   z-index: 1000;
-  background-color: #ffffff;
+  background-color: #1c1c1e;
+  padding: 10px 0;
 `;
 
 const StyledHeader = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  background-color: #ffffff;
-  font-size: 16px;
-  width: 100%;
-  height: 64px;
-  font-weight: 500;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+`;
+
+const Logo = styled(Link)`
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #0a84ff;
+  text-decoration: none;
 `;
 
 const StyledNav = styled.nav`
   ul {
     list-style: none;
     display: flex;
-    justify-content: center;
     padding: 0;
     margin: 0;
+
     li {
-      margin: 0 20px;
+      margin: 0 15px;
+
       a {
-        color: #333333;
+        color: #ffffff;
         text-decoration: none;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: color 0.3s ease;
+
         &:hover {
-          text-decoration: underline;
+          color: #0a84ff;
         }
       }
     }
@@ -53,9 +64,9 @@ const Header = () => {
     const storedToken = localStorage.getItem('accessToken');
     if (storedToken) {
       setAccessToken(storedToken);
-      setIsLoggedIn(true); // 로그인 상태 설정
+      setIsLoggedIn(true);
     } else {
-      setIsLoggedIn(false); // 로그아웃 상태 설정
+      setIsLoggedIn(false);
     }
   }, [setAccessToken, setIsLoggedIn]);
 
@@ -70,6 +81,7 @@ const Header = () => {
   return (
     <StyledHeaderBorder>
       <StyledHeader>
+        <Logo to="/Main">동방박사</Logo>
         <StyledNav>
           <ul>
             <li>
