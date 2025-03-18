@@ -32,7 +32,7 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #f5f5f7;
+  background-color: #1c1c1e;
 `;
 
 // QueryClient 인스턴스 생성

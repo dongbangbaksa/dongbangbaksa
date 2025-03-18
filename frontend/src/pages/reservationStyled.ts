@@ -7,8 +7,10 @@ export const ReservationPageWrapper = styled.div`
   justify-content: center;
   width: 100%;
   height: 100vh;
-  background-color: #f5f5f7;
+  background-color: #1d1d1f;
   padding: 20px;
+  color: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Helvetica Neue', Arial, sans-serif;
 `;
 
 export const ContentWrapper = styled.div`
@@ -33,7 +35,7 @@ export const HeaderSection = styled.div`
 export const Title = styled.h1`
   font-size: 36px;
   font-weight: bold;
-  color: #333333;
+  color: #f5f5f7;
   margin: 0;
 `;
 
@@ -64,7 +66,7 @@ export const SelectWrapper = styled.div`
 
 export const Notice = styled.div`
   margin-bottom: 15px;
-  color: #7b7b7b;
+  color: #a1a1a6;
   font-size: 14px;
 `;
 
@@ -77,7 +79,7 @@ export const ButtonContainer = styled.div`
 
 export const Button = styled.button`
   border: none;
-  background-color: #0071e3;
+  background-color: #0a84ff;
   color: #ffffff;
   font-size: 18px;
   font-weight: bold;
@@ -89,6 +91,6 @@ export const Button = styled.button`
     background-color 0.3s,
     color 0.3s;
   &:hover {
-    background-color: #005bb5;
+    background-color: #0071e3;
   }
 `;

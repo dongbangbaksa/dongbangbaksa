@@ -8,12 +8,13 @@ const IntroContainer = styled.div`
   justify-content: center;
   height: 80vh;
   padding: 20px;
-  background-color: #f5f5f7;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #1c1c1e;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: white;
+  text-align: center;
 
   @media (max-width: 768px) {
     padding: 20px 10px;
-    text-align: center;
   }
 `;
 
@@ -24,23 +25,22 @@ interface IntroTextProps {
 
 const IntroText = styled.div<IntroTextProps>`
   font-size: ${(props) => props.size || 'inherit'};
-  text-align: center;
   margin: 10px;
-  color: ${(props) => props.color || '#333333'};
+  color: ${(props) => props.color || '#f5f5f7'};
   font-weight: ${(props) => (props.size === '36px' ? '600' : '400')};
 `;
 
 const AboutPage: React.FC = () => {
   return (
     <IntroContainer>
-      <IntroText size="36px" color="#333333">
+      <IntroText size="36px" color="#0a84ff">
         About this service...
       </IntroText>
-      <IntroText size="20px" color="#555555">
-        이 서비스에 대하여
+      <IntroText size="20px" color="#b0b0b0">
+        동방박사에 대하여
       </IntroText>
       <IntroText size="20px" color="#777777">
-        이 서비스는 테커 팀루나 프로젝트팀 Achieve에서 만든 동아리방 예약 시스템 입니다.
+        동방박사는 동아리방 시간 예약 서비스 입니다.
       </IntroText>
     </IntroContainer>
   );

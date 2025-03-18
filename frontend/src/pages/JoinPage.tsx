@@ -8,7 +8,7 @@ import { requestEmailVerification, confirmEmailVerification, signUpUser } from '
 const JoinText = styled.div`
   font-size: 48px;
   font-weight: bold;
-  color: #3a3a3a;
+  color: #f5f5f7;
   text-align: center;
   margin-top: 40px;
   margin-bottom: 20px;
@@ -17,7 +17,7 @@ const JoinText = styled.div`
 const LoginText = styled.div`
   font-size: 16px;
   font-weight: 300;
-  color: #585858;
+  color: #b0b0b0;
   text-align: center;
   margin-bottom: 20px;
 `;
@@ -25,11 +25,11 @@ const LoginText = styled.div`
 const LoginLink = styled(Link)`
   font-size: 16px;
   font-weight: 300;
-  color: #0071e3;
+  color: #0a84ff;
   text-decoration: none;
   cursor: pointer;
   &:hover {
-    color: #005bb5;
+    color: #0071e3;
   }
 `;
 
@@ -37,10 +37,9 @@ const FormContainer = styled.div`
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #fff;
-  border: 1px solid #e4e4e4;
+  background-color: #2c2c2e;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
 `;
 
 const StyledForm = styled.form`
@@ -56,46 +55,48 @@ const FormGroup = styled.div`
 
 const Label = styled.label`
   font-size: 14px;
-  color: #333;
+  color: #f5f5f7;
   margin-bottom: 5px;
 `;
 
 const Select = styled.select`
-  border: 1px solid #e4e4e4;
+  border: 1px solid #636366;
   padding: 10px;
   font-size: 16px;
   border-radius: 6px;
   width: 100%;
+  background-color: #3a3a3c;
+  color: #f5f5f7;
 `;
 
 const Input = styled.input`
-  border: 1px solid #e4e4e4;
+  border: 1px solid #636366;
   padding: 10px;
   font-size: 16px;
   border-radius: 6px;
   width: 100%;
   margin-bottom: 10px;
+  background-color: #3a3a3c;
+  color: #f5f5f7;
 `;
 
 const Button = styled.button`
   border: none;
-  background-color: #0071e3;
+  background-color: #0a84ff;
   color: #ffffff;
   font-size: 16px;
   padding: 10px;
   border-radius: 6px;
   cursor: pointer;
-  transition:
-    background-color 0.3s,
-    color 0.3s;
+  transition: background-color 0.3s;
   width: 100%;
 
   &:hover {
-    background-color: #005bb5;
+    background-color: #0071e3;
   }
 
   &:disabled {
-    background-color: #c0c0c0;
+    background-color: #636366;
     cursor: not-allowed;
   }
 `;
@@ -112,17 +113,13 @@ const JoinPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>(null);
 
-  const handleSendCodeClick: React.MouseEventHandler<HTMLButtonElement> = async () => {
+  const handleSendCodeClick = async () => {
     try {
       await requestEmailVerification(email);
       setIsModalOpen(true);
       setModalContent('이메일로 인증번호가 전송되었습니다.');
     } catch (error) {
-      if ((error as AxiosError).isAxiosError) {
-        console.error('코드 전송 중 에러:', (error as AxiosError).message);
-      } else {
-        console.error('코드 전송 중 에러:', error);
-      }
+      console.error('코드 전송 중 에러:', error);
     }
   };
 
@@ -133,7 +130,7 @@ const JoinPage: React.FC = () => {
       setModalContent(response.message);
       setVerificationMessage('인증이 완료되었습니다.');
     } catch (error) {
-      console.error('인증 확인 중 에러:', (error as AxiosError).message);
+      console.error('인증 확인 중 에러:', error);
     }
   };
 
@@ -171,12 +168,7 @@ const JoinPage: React.FC = () => {
         <StyledForm onSubmit={handleSubmit}>
           <FormGroup>
             <Label htmlFor="affiliation">소속</Label>
-            <Select
-              id="affiliation"
-              name="affiliation"
-              value={affiliation}
-              onChange={(event) => setAffiliation(event.target.value)}
-            >
+            <Select id="affiliation" value={affiliation} onChange={(e) => setAffiliation(e.target.value)}>
               <option value="">선택하세요</option>
               <option value="Techeer">Techeer</option>
               <option value="TecheerPartners">Techeer Partners</option>
@@ -184,58 +176,24 @@ const JoinPage: React.FC = () => {
           </FormGroup>
           <FormGroup>
             <Label htmlFor="name">이름</Label>
-            <Input type="text" id="name" name="name" value={name} onChange={(event) => setName(event.target.value)} />
+            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
           </FormGroup>
           <FormGroup>
             <Label htmlFor="email">이메일</Label>
-            <Input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
+            <Input id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             <Button type="button" onClick={handleSendCodeClick} disabled={!email}>
               인증
             </Button>
           </FormGroup>
           <FormGroup>
             <Label htmlFor="authCode">인증코드</Label>
-            <Input
-              type="text"
-              id="authCode"
-              name="authCode"
-              value={authCode}
-              onChange={(event) => setAuthCode(event.target.value)}
-            />
+            <Input id="authCode" value={authCode} onChange={(e) => setAuthCode(e.target.value)} />
             <Button type="button" onClick={handleConfirmAuthClick} disabled={!authCode}>
               인증확인
             </Button>
             <div>{verificationMessage}</div>
           </FormGroup>
-          <FormGroup>
-            <Label htmlFor="password">비밀번호</Label>
-            <Input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label htmlFor="passwordConfirm">비밀번호 확인</Label>
-            <Input
-              type="password"
-              id="passwordConfirm"
-              name="passwordConfirm"
-              value={passwordConfirm}
-              onChange={(event) => setPasswordConfirm(event.target.value)}
-            />
-          </FormGroup>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-            <Button type="submit">가입하기</Button>
-          </div>
+          <Button type="submit">가입하기</Button>
         </StyledForm>
       </FormContainer>
     </>

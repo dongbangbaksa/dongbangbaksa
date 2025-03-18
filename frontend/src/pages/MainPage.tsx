@@ -7,9 +7,11 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  margin: 0;
-  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #1c1c1e;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 `;
 
 const ContentWrapper = styled.div`
@@ -17,81 +19,75 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 800px;
-  padding: 20px;
-`;
-
-const Box = styled.div`
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  margin-top: 20px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  max-width: 900px;
+  padding: 40px 20px;
   text-align: center;
+`;
 
-  h2,
-  h3 {
-    margin: 0;
-    color: #333;
-  }
+const Title = styled.h1`
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #0a84ff;
+`;
 
-  h3 {
-    font-weight: 400;
-    margin-bottom: 10px;
-  }
+const Subtitle = styled.p`
+  font-size: 1.25rem;
+  color: #b0b0b0;
+  margin-bottom: 40px;
+`;
 
-  h2 {
-    font-weight: 600;
-  }
+const Box = styled(Link)`
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  background: #2c2c2e;
+  padding: 30px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  text-decoration: none;
+  color: inherit;
 
-  p {
-    font-size: 1rem;
-    color: #666;
-  }
-
-  @media (max-width: 48rem) {
-    padding: 15px;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
   }
 `;
 
-const ReservationLink = styled(Link)`
-  cursor: pointer;
-  text-decoration: none;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+const BoxTitle = styled.h2`
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 5px;
+  color: #ffffff;
+`;
 
-  @media (max-width: 48rem) {
-    margin-bottom: 10px;
-  }
+const BoxSubtitle = styled.h3`
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #0a84ff;
+  margin: 0;
 `;
 
 const MainPage: React.FC = () => {
   return (
     <Container>
       <ContentWrapper>
-        <Box>
-          <h1>동아리방 예약 서비스 동방박사</h1>
-          <p>예약 취소를 간편하게!</p>
+        <Title>동아리방 예약 서비스 동방박사</Title>
+        <Subtitle>예약 취소를 간편하게!</Subtitle>
+
+        <Box to="/select">
+          <BoxSubtitle>스마트하게</BoxSubtitle>
+          <BoxTitle>동아리방 예약</BoxTitle>
         </Box>
 
-        <ReservationLink to="/select">
-          <Box>
-            <h3>스마트하게</h3>
-            <h2>동아리방 예약</h2>
-          </Box>
-        </ReservationLink>
-
-        <ReservationLink to="/notice">
-          <Box>
-            <h3>필독!</h3>
-            <h2>공지사항 확인</h2>
-          </Box>
-        </ReservationLink>
+        <Box to="/notice">
+          <BoxSubtitle>필독!</BoxSubtitle>
+          <BoxTitle>공지사항 확인</BoxTitle>
+        </Box>
       </ContentWrapper>
     </Container>
   );

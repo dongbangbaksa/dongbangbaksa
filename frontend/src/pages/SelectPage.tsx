@@ -9,15 +9,16 @@ const StyledReservationPage = styled.div`
   align-items: center;
   width: 100%;
   height: 100vh;
-  background-color: #f5f5f7;
-  color: #000000;
+  background-color: #1c1c1e;
+  color: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 `;
 
 const WhiteBox = styled.div`
   width: 90%;
   max-width: 600px;
-  background: #ffffff;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  background: #2c2c2e;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.5);
   border-radius: 20px;
   padding: 20px;
   margin-bottom: 20px;
@@ -25,26 +26,23 @@ const WhiteBox = styled.div`
 `;
 
 const TitleText = styled.div`
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 600;
   font-size: 24px;
-  color: #333333;
+  color: #0a84ff;
   margin-bottom: 10px;
 `;
 
 const AdditionalText = styled.div`
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 400;
   font-size: 16px;
-  color: #555555;
+  color: #d1d1d6;
   line-height: 1.5;
 `;
 
 const ReserveText = styled.div`
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 28px;
   font-weight: 300;
-  color: #333333;
+  color: #f5f5f7;
   margin-bottom: 40px;
   text-align: center;
 `;
