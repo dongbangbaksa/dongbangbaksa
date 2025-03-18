@@ -7,71 +7,65 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f5f5f7;
+  background-color: #1c1c1e;
   min-height: 100vh;
-  position: relative;
+  color: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 `;
 
 const WriteButton = styled.button`
-  padding: 12px 24px;
-  background-color: #0071e3;
+  padding: 14px 28px;
+  background-color: #0a84ff;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 50px;
   cursor: pointer;
-  position: fixed;
-  top: 20px;
-  right: 20px;
+  font-size: 16px;
   transition: background-color 0.3s;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
   z-index: 1000;
 
   &:hover {
-    background-color: #005bb5;
+    background-color: #0071e3;
   }
 `;
 
 const Box = styled.div`
   width: 100%;
-  max-width: 800px;
-  background-color: #ffffff;
-  border: 1px solid #e4e4e4;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: 20px;
+  background-color: #2c2c2e;
+  border-radius: 12px;
+  padding: 24px;
   margin-bottom: 20px;
-  border-radius: 10px;
-  transition:
-    background-color 0.3s,
-    box-shadow 0.3s;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+  cursor: pointer;
 
   &:hover {
-    background-color: #f0f0f5;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    transform: scale(1.02);
   }
 `;
 
 const StyledLink = styled(Link)`
   text-decoration: none;
+  color: inherit;
   width: 100%;
 `;
 
 const Title = styled.div`
   font-weight: bold;
-  color: #333333;
-  font-size: 24px;
-  margin-bottom: 10px;
-  text-align: left;
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: #f5f5f7;
 `;
 
 const Content = styled.div`
-  color: #575757;
   font-size: 16px;
-  text-align: left;
+  color: #a1a1a1;
 `;
 
 interface BoardItem {
@@ -166,21 +160,18 @@ const NoticePage: React.FC = () => {
 
   return (
     <PageContainer>
-      <WriteButton onClick={handleWriteClick}>글쓰기</WriteButton>
-      {data.length > 0 ? (
-        data.map((item) => (
-          <StyledLink to={`/Post/${item.boardId}`} key={item.boardId}>
-            <Box>
-              <Title>{item.title}</Title>
-              <Content>{item.context}</Content>
-            </Box>
-          </StyledLink>
-        ))
-      ) : (
-        <p>No posts available.</p>
-      )}
+      <h1>공지사항</h1>
+      {data.map((item) => (
+        <StyledLink to={`/Post/${item.boardId}`} key={item.boardId}>
+          <Box>
+            <Title>{item.title}</Title>
+            <Content>{item.context}</Content>
+          </Box>
+        </StyledLink>
+      ))}
       {loading && <p>Loading...</p>}
       {hasMore && <div ref={lastElementRef} />}
+      <WriteButton onClick={handleWriteClick}>글쓰기</WriteButton>
     </PageContainer>
   );
 };
