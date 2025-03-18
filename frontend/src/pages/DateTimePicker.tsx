@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import axiosInstance from '../util/axiosConfig'; // axios 인스턴스 import
+import Select from 'react-select';
+import axiosInstance from '../util/axiosConfig';
+import { InputWrapper } from './reservationStyled';
 
 interface DateTimePickerProps {
   selectedStartDate: Date | null;
   selectedEndDate: Date | null;
   onStartDateChange: (date: Date | null) => void;
   onEndDateChange: (date: Date | null) => void;
+  selectedMembers: { value: number; label: string } | null;
+  onMembersChange: (selectedOption: any) => void;
 }
 
 const DateTimePicker: React.FC<DateTimePickerProps> = ({
@@ -15,6 +19,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   selectedEndDate,
   onStartDateChange,
   onEndDateChange,
+  selectedMembers,
+  onMembersChange,
 }) => {
   const [reservedTimes, setReservedTimes] = useState<{ start: Date; end: Date }[]>([]);
 
@@ -63,12 +69,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       reservedTimes
         .filter(({ start, end }) => selectedDate.toDateString() === start.toDateString()) // 같은 날짜의 예약된 시간만 필터링
         .forEach(({ start, end }) => {
-          // 예약 시작 시간부터 종료 시간까지 1시간 간격으로 비활성화 시간 추가
           let current = new Date(start); // start 시간부터 시작
-          // start 시간에 맞춰 정확히 1시간 단위로 비활성화
           while (current <= end) {
-            // 종료 시간도 포함하도록 수정
-            // 현재 시간을 disabledTimes에 추가 (초 단위 제외)
             disabledTimes.push(new Date(current.setMinutes(0, 0, 0))); // 정확히 시각만 맞춰서 00분 00초로 설정
             current.setHours(current.getHours() + 1); // 1시간 간격으로 설정
           }
@@ -83,38 +85,71 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     fetchReservations(); // 예약 데이터를 불러옴
   }, [fetchReservations]);
 
+  // 인원 선택 옵션
+  const membersOptions = Array.from({ length: 5 }, (_, i) => ({ value: i + 1, label: `${i + 1}명` }));
+
   return (
     <div>
-      <div>
-        <label>예약 시작 시간</label>
+      <InputWrapper>
+        <label>📅 날짜 선택</label>
+        <DatePicker
+          selected={selectedStartDate}
+          onChange={onStartDateChange}
+          dateFormat="yyyy-MM-dd"
+          minDate={new Date()}
+          className="date-picker"
+          placeholderText="날짜를 선택하세요"
+        />
+      </InputWrapper>
+
+      <InputWrapper>
+        <label>⏰ 시작 시간</label>
         <DatePicker
           selected={selectedStartDate}
           onChange={onStartDateChange}
           showTimeSelect
-          dateFormat="yyyy-MM-dd HH:mm"
-          timeFormat="HH:mm"
+          showTimeSelectOnly
           timeIntervals={60}
-          minDate={new Date()}
-          timeCaption="시간"
-          showPopperArrow={false}
+          timeFormat="HH:mm"
+          dateFormat="HH:mm"
+          minTime={new Date().setHours(9, 0, 0)}
+          maxTime={new Date().setHours(21, 0, 0)}
           excludeTimes={getDisabledTimes(selectedStartDate)}
+          placeholderText="시작 시간 선택"
+          disabled={!selectedStartDate}
+          className="date-picker"
         />
-      </div>
-      <div>
-        <label>예약 종료 시간</label>
+      </InputWrapper>
+
+      <InputWrapper>
+        <label>⌛ 종료 시간</label>
         <DatePicker
           selected={selectedEndDate}
           onChange={onEndDateChange}
           showTimeSelect
-          dateFormat="yyyy-MM-dd HH:mm"
-          timeFormat="HH:mm"
+          showTimeSelectOnly
           timeIntervals={60}
-          minDate={selectedStartDate || new Date()}
-          timeCaption="시간"
-          showPopperArrow={false}
-          excludeTimes={getDisabledTimes(selectedEndDate)}
+          timeFormat="HH:mm"
+          dateFormat="HH:mm"
+          minTime={selectedStartDate ? new Date(selectedStartDate.getTime() + 60 * 60 * 1000) : undefined}
+          maxTime={selectedStartDate ? new Date(selectedStartDate.getTime() + 3 * 60 * 60 * 1000) : undefined}
+          excludeTimes={getDisabledTimes(selectedStartDate)}
+          placeholderText="종료 시간 선택"
+          disabled={!selectedStartDate}
+          className="date-picker"
         />
-      </div>
+      </InputWrapper>
+
+      <InputWrapper>
+        <label>👥 인원 선택</label>
+        <Select
+          classNamePrefix="react-select"
+          options={membersOptions}
+          value={selectedMembers}
+          onChange={onMembersChange}
+          className="react-select"
+        />
+      </InputWrapper>
     </div>
   );
 };
