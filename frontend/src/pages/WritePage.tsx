@@ -10,8 +10,10 @@ const PageContainer = styled.div`
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f5f5f7;
+  background-color: #1c1c1e;
   min-height: 100vh;
+  color: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 `;
 
 const Input = styled.input`
@@ -19,9 +21,17 @@ const Input = styled.input`
   padding: 12px;
   font-size: 16px;
   width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background: #2c2c2e;
+  border: 1px solid #3a3a3c;
+  border-radius: 12px;
+  color: #f5f5f7;
   box-sizing: border-box;
+  outline: none;
+
+  &:focus {
+    border-color: #0a84ff;
+    background: #3a3a3c;
+  }
 `;
 
 const TextArea = styled.textarea`
@@ -29,10 +39,18 @@ const TextArea = styled.textarea`
   padding: 12px;
   font-size: 16px;
   width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background: #2c2c2e;
+  border: 1px solid #3a3a3c;
+  border-radius: 12px;
+  color: #f5f5f7;
   box-sizing: border-box;
   min-height: 150px;
+  outline: none;
+
+  &:focus {
+    border-color: #0a84ff;
+    background: #3a3a3c;
+  }
 `;
 
 const FileInput = styled.input`
@@ -40,9 +58,12 @@ const FileInput = styled.input`
   padding: 12px;
   font-size: 16px;
   width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background: #2c2c2e;
+  border: 1px solid #3a3a3c;
+  border-radius: 12px;
+  color: #f5f5f7;
   box-sizing: border-box;
+  outline: none;
 `;
 
 const Select = styled.select`
@@ -50,23 +71,31 @@ const Select = styled.select`
   padding: 12px;
   font-size: 16px;
   width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background: #2c2c2e;
+  border: 1px solid #3a3a3c;
+  border-radius: 12px;
+  color: #f5f5f7;
   box-sizing: border-box;
+  outline: none;
+  cursor: pointer;
+
+  &:focus {
+    border-color: #0a84ff;
+  }
 `;
 
 const Button = styled.button`
   padding: 12px 24px;
-  background-color: #0071e3;
+  background-color: #0a84ff;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #005bb5;
+    background-color: #0071e3;
   }
 `;
 
@@ -116,10 +145,7 @@ const WritePage: React.FC = () => {
       <form onSubmit={handleSubmit}>
         <Input type="text" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)} required />
         <Select value={category} onChange={(e) => setCategory(e.target.value)} required>
-          <option value="SUGGESTION">Suggestion</option>
           <option value="NOTICE">Notice</option>
-          <option value="EVENT">Event</option>
-          {/* 필요한 다른 카테고리 여기에 추가 */}
         </Select>
         <TextArea placeholder="내용" value={context} onChange={(e) => setContext(e.target.value)} required />
         <FileInput type="file" multiple onChange={(e) => setFiles(e.target.files)} />
