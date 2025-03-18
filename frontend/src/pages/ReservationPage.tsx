@@ -17,7 +17,7 @@ import {
   Notice,
   ButtonContainer,
   Button,
-} from './styled';
+} from './reservationStyled';
 
 // Lazy load Modal and DateTimePicker
 const Modal = lazy(() => import('../components/Modal'));
