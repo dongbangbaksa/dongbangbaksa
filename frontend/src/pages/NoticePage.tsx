@@ -8,10 +8,8 @@ const PageContainer = styled.div`
   flex-direction: column;
   align-items: center;
   max-width: 1000px;
-  margin: 0 auto;
   padding: 20px;
   background-color: #1c1c1e;
-  min-height: 100vh;
   color: #f5f5f7;
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 `;
@@ -46,7 +44,9 @@ const Box = styled.div`
   cursor: pointer;
 
   &:hover {
-    transform: scale(1.02);
+    background: #3a3a3c;
+    transform: scale(1.05);
+    box-shadow: 0px 6px 20px rgba(10, 132, 255, 0.4);
   }
 `;
 
