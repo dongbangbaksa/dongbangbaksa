@@ -91,7 +91,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   return (
     <div>
       <InputWrapper>
-        <label>📅 날짜 선택</label>
+        <label>날짜 선택</label>
         <DatePicker
           selected={selectedStartDate}
           onChange={onStartDateChange}
@@ -103,7 +103,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       </InputWrapper>
 
       <InputWrapper>
-        <label>⏰ 시작 시간</label>
+        <label>시작 시간</label>
         <DatePicker
           selected={selectedStartDate}
           onChange={onStartDateChange}
@@ -122,7 +122,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       </InputWrapper>
 
       <InputWrapper>
-        <label>⌛ 종료 시간</label>
+        <label>종료 시간</label>
         <DatePicker
           selected={selectedEndDate}
           onChange={onEndDateChange}
@@ -141,7 +141,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       </InputWrapper>
 
       <InputWrapper>
-        <label>👥 인원 선택</label>
+        <label>인원 선택</label>
         <Select
           classNamePrefix="react-select"
           options={membersOptions}
