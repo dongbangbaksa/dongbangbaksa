@@ -3,7 +3,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Select from 'react-select';
 import axiosInstance from '../util/axiosConfig';
-import { InputWrapper } from './reservationStyled';
+import { InputWrapper } from '../styles/reservationStyled';
 
 interface DateTimePickerProps {
   selectedStartDate: Date | null;

@@ -1,13 +1,13 @@
 import axios from 'axios';
 
 // axios 인스턴스 생성
-const instance = axios.create({
+const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080',
   withCredentials: true,
 });
 
-// 요청 인터셉터 추가: 모든 요청에 자동으로 액세스 토큰 추가
-instance.interceptors.request.use(
+// 요청 인터셉터: 모든 요청에 자동으로 액세스 토큰 추가
+axiosInstance.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
@@ -20,8 +20,8 @@ instance.interceptors.request.use(
   },
 );
 
-// 응답 인터셉터 추가: 401 응답을 받을 경우 리프레시 토큰으로 액세스 토큰 갱신
-instance.interceptors.response.use(
+// 응답 인터셉터: 401 응답을 받을 경우 리프레시 토큰으로 액세스 토큰 갱신
+axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -34,7 +34,7 @@ instance.interceptors.response.use(
         return Promise.reject(error);
       }
       try {
-        const res = await instance.post(
+        const res = await axiosInstance.post(
           '/api/user/refresh',
           {},
           {
@@ -47,7 +47,7 @@ instance.interceptors.response.use(
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
           originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
-          return instance(originalRequest);
+          return axiosInstance(originalRequest);
         }
       } catch (refreshError) {
         console.error('Failed to refresh token:', refreshError);
@@ -59,4 +59,4 @@ instance.interceptors.response.use(
   },
 );
 
-export default instance;
+export default axiosInstance;

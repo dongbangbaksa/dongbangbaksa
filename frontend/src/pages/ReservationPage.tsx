@@ -11,7 +11,7 @@ import {
   DateTimeSelectContainer,
   ButtonContainer,
   Button,
-} from './reservationStyled';
+} from '../styles/reservationStyled';
 
 const Modal = lazy(() => import('../components/Modal'));
 const DateTimePicker = lazy(() => import('../pages/DateTimePicker'));
@@ -20,7 +20,7 @@ const ReservationPage: React.FC = () => {
   const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
 
-  const { data: reservations, isLoading, isError } = useFetchReservations(); // 예약 정보 가져오기
+  const { data: isLoading, isError } = useFetchReservations(); // 예약 정보 가져오기
   const { mutate: createReservation, isLoading: isCreatingReservation } = useCreateReservation(); // 예약 생성 훅
 
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
