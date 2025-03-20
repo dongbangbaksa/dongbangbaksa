@@ -77,7 +77,16 @@ const ReservationPage: React.FC = () => {
 
       console.log('예약 데이터:', reservationData);
 
-      createReservation(reservationData); // 예약 요청
+      createReservation(reservationData, {
+        onSuccess: () => {
+          // 예약 성공 시 모달 열기
+          setReservationModalOpen(true);
+        },
+        onError: () => {
+          // 예약 실패 시 에러 모달 열기
+          setErrorModalOpen(true);
+        },
+      }); // 예약 요청
     } else {
       console.error('모든 요소를 선택해주세요.');
     }
