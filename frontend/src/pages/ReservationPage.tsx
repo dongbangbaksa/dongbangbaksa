@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import Select from 'react-select';
 import { useMutation } from 'react-query';
 
 import { accessTokenState } from '../recoil/recoilState';
@@ -12,9 +11,6 @@ import {
   HeaderSection,
   Title,
   DateTimeSelectContainer,
-  TimeSelectContainer,
-  SelectWrapper,
-  Notice,
   ButtonContainer,
   Button,
 } from './reservationStyled';
@@ -36,14 +32,16 @@ const ReservationPage: React.FC = () => {
   const [isReservationModalOpen, setReservationModalOpen] = useState(false);
   const [isErrorModalOpen, setErrorModalOpen] = useState(false);
 
-  const membersOptions = Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: `${i + 1}명` }));
-
   const handleStartDateChange = (date: Date | null) => {
     setSelectedStartDate(date);
   };
 
   const handleEndDateChange = (date: Date | null) => {
     setSelectedEndDate(date);
+  };
+
+  const handleMembersChange = (selectedOption: any) => {
+    setSelectedMembers(selectedOption);
   };
 
   const formatDateTime = (date: Date | null): string => {
@@ -127,27 +125,11 @@ const ReservationPage: React.FC = () => {
               selectedEndDate={selectedEndDate}
               onStartDateChange={handleStartDateChange}
               onEndDateChange={handleEndDateChange}
+              selectedMembers={selectedMembers}
+              onMembersChange={handleMembersChange}
             />
           </Suspense>
         </DateTimeSelectContainer>
-        <TimeSelectContainer>
-          <Notice>* 날짜와 시간을 모두 선택해주세요.</Notice>
-          <SelectWrapper>
-            <label>인원을 선택하세요.</label>
-            <Select
-              classNamePrefix="react-select"
-              options={membersOptions}
-              value={selectedMembers}
-              onChange={(selectedOption) => setSelectedMembers(selectedOption)}
-              styles={{
-                control: (provided) => ({
-                  ...provided,
-                  height: '40px',
-                }),
-              }}
-            />
-          </SelectWrapper>
-        </TimeSelectContainer>
       </ContentWrapper>
       <ButtonContainer>
         <Button onClick={handleReservation} disabled={mutation.isLoading}>

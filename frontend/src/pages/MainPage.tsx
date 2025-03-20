@@ -7,8 +7,6 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  min-height: 100vh;
   background-color: #1c1c1e;
   color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -19,7 +17,6 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 900px;
   padding: 40px 20px;
   text-align: center;
 `;
@@ -53,8 +50,9 @@ const Box = styled(Link)`
   color: inherit;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+    background: #3a3a3c;
+    transform: scale(1.05);
+    box-shadow: 0px 6px 20px rgba(10, 132, 255, 0.4);
   }
 `;
 

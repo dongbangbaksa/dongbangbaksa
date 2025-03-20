@@ -23,6 +23,13 @@ const WhiteBox = styled.div`
   padding: 20px;
   margin-bottom: 20px;
   text-align: left;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    background: #3a3a3c;
+    transform: scale(1.05);
+    box-shadow: 0px 6px 20px rgba(10, 132, 255, 0.4);
+  }
 `;
 
 const TitleText = styled.div`

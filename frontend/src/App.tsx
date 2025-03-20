@@ -20,7 +20,7 @@ const PostPage = React.lazy(() => import('./pages/PostPage'));
 const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 98vh;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 `;
 

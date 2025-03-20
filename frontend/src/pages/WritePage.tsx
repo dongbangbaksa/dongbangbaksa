@@ -11,7 +11,6 @@ const PageContainer = styled.div`
   margin: 0 auto;
   padding: 20px;
   background-color: #1c1c1e;
-  min-height: 100vh;
   color: #f5f5f7;
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 `;
@@ -101,7 +100,7 @@ const Button = styled.button`
 
 const WritePage: React.FC = () => {
   const [title, setTitle] = useState<string>('');
-  const [category, setCategory] = useState<string>('SUGGESTION');
+  const [category, setCategory] = useState<string>('NOTICE');
   const [context, setContext] = useState<string>('');
   const [files, setFiles] = useState<FileList | null>(null);
   const navigate = useNavigate();
