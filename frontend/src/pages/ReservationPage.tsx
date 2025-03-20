@@ -1,9 +1,8 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { useMutation } from 'react-query';
 
-import { accessTokenState } from '../recoil/recoilState';
+import { useAuthStore } from '../store/useAuthStore';
 import { createReservation } from '../util/api';
 import {
   ReservationPageWrapper,
@@ -21,7 +20,7 @@ const DateTimePicker = lazy(() => import('../pages/DateTimePicker'));
 
 const ReservationPage: React.FC = () => {
   const navigate = useNavigate();
-  const accessToken = useRecoilValue(accessTokenState);
+  const accessToken = useAuthStore((state) => state.accessToken);
 
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);

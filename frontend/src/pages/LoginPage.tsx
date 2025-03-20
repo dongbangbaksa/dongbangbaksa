@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../components/Modal';
-import { useSetRecoilState } from 'recoil';
-import { accessTokenState, refreshTokenState, isLoggedInState } from '../recoil/recoilState';
+import { useAuthStore } from '../store/useAuthStore';
 import { signInUser } from '../util/api';
 
 const Container = styled.div`
@@ -82,9 +81,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const setAccessToken = useSetRecoilState(accessTokenState);
-  const setRefreshToken = useSetRecoilState(refreshTokenState);
-  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
+  const { setLogin } = useAuthStore();
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -101,29 +98,21 @@ const LoginPage: React.FC = () => {
       const accessTokenFromHeader = response.headers['authorization'];
       const refreshTokenFromHeader = response.headers['refresh-token'];
 
-      if (accessTokenFromHeader && accessTokenFromHeader.startsWith('Bearer ')) {
+      if (accessTokenFromHeader && accessTokenFromHeader.startsWith('Bearer ') && refreshTokenFromHeader) {
         const accessToken = accessTokenFromHeader.split(' ')[1];
-        localStorage.setItem('accessToken', accessToken);
-        setAccessToken(accessToken);
-        console.log('Access Token saved:', localStorage.getItem('accessToken')); // 저장된 액세스 토큰 확인
-      } else {
-        console.error('No access token received');
-      }
 
-      if (refreshTokenFromHeader) {
-        localStorage.setItem('refreshToken', refreshTokenFromHeader);
-        setRefreshToken(refreshTokenFromHeader);
-        console.log('Refresh Token saved:', localStorage.getItem('refreshToken')); // 저장된 리프레시 토큰 확인
-        setIsLoggedIn(true);
+        // Zustand 상태 업데이트
+        setLogin(accessToken, refreshTokenFromHeader);
+
+        console.log('Access Token saved:', accessToken);
+        console.log('Refresh Token saved:', refreshTokenFromHeader);
+
+        setIsModalOpen(true);
       } else {
-        console.error('No refresh token received');
-        alert('로그인 성공, 하지만 리프레시 토큰을 받지 못했습니다. 다시 로그인해주세요.');
-        setIsLoggedIn(false);
-        navigate('/login'); // 리프레시 토큰이 없다면 다시 로그인을 유도
+        console.error('No valid tokens received');
+        alert('로그인 성공, 하지만 토큰을 받지 못했습니다. 다시 로그인해주세요.');
         return;
       }
-
-      setIsModalOpen(true);
     } catch (error) {
       console.error('로그인 실패:', error);
       alert('로그인에 실패했습니다.');

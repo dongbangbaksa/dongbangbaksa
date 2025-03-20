@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Modal from '../components/Modal';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import { isLoggedInState, accessTokenState, refreshTokenState } from '../recoil/recoilState';
+import { useAuthStore } from '../store/useAuthStore';
 import { fetchReservations, deleteReservation, signOutUser } from '../util/api';
+import { create } from 'zustand';
+
 type MeetingRoomType = {
   id: number;
   name: string;
@@ -17,6 +18,14 @@ type ReservationType = {
   members: number;
   meetingRoom: MeetingRoomType;
 };
+
+const useReservationStore = create<{
+  reservations: ReservationType[];
+  setReservations: (reservations: ReservationType[]) => void;
+}>((set) => ({
+  reservations: [],
+  setReservations: (reservations) => set({ reservations }),
+}));
 
 const PageContainer = styled.div`
   max-width: 900px;
@@ -107,12 +116,10 @@ const LogoutButton = styled.button`
 
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
-  const [reservations, setReservations] = useState<ReservationType[]>([]);
+  const { accessToken, logout } = useAuthStore();
+  const { reservations, setReservations } = useReservationStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<string>('');
-  const [, setIsLoggedIn] = useRecoilState(isLoggedInState);
-  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-  const [, setRefreshToken] = useRecoilState(refreshTokenState);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,7 +131,7 @@ const MyPage: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [setReservations]);
 
   const handleLogout = async () => {
     try {
@@ -132,11 +139,7 @@ const MyPage: React.FC = () => {
         await signOutUser(accessToken);
         setModalContent('로그아웃이 완료되었습니다.');
         setIsModalOpen(true);
-        setIsLoggedIn(false);
-        setAccessToken(null);
-        setRefreshToken(null);
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        logout();
       }
     } catch (error) {
       console.error('로그아웃 실패:', error);
@@ -148,7 +151,7 @@ const MyPage: React.FC = () => {
   const handleDeleteReservation = async (id: number) => {
     try {
       await deleteReservation(id);
-      setReservations((prevReservations) => prevReservations.filter((r) => r.id !== id));
+      setReservations(reservations.filter((r) => r.id !== id));
       setModalContent('예약이 취소되었습니다.');
       setIsModalOpen(true);
     } catch (error) {

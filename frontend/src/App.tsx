@@ -1,9 +1,9 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import styled from 'styled-components';
 import Header from './components/layout/Header';
+import { useAuthStore } from './store/useAuthStore';
 
 // 페이지 컴포넌트들을 레이지 로딩으로 불러오기
 const MainPage = React.lazy(() => import('./pages/MainPage'));
@@ -39,33 +39,32 @@ const Content = styled.div`
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   return (
     <QueryClientProvider client={queryClient}>
-      <RecoilRoot>
-        <Router>
-          <AppContainer>
-            <Suspense fallback={<div>로딩 중...</div>}>
-              {/* Suspense는 페이지가 로딩 중일 때 보여줄 컴포넌트 */}
-              <Content>
-                <Header />
-                <Routes>
-                  <Route path="/" element={<MainPage />} />
-                  <Route path="/main" element={<MainPage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/reservation" element={<ReservationPage />} />
-                  <Route path="/select" element={<SelectPage />} />
-                  <Route path="/notice" element={<NoticePage />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/join" element={<JoinPage />} />
-                  <Route path="/mypage" element={<MyPage />} />
-                  <Route path="/writepage" element={<WritePage />} />
-                  <Route path="/post/:id" element={<PostPage />} />
-                </Routes>
-              </Content>
-            </Suspense>
-          </AppContainer>
-        </Router>
-      </RecoilRoot>
+      <Router>
+        <AppContainer>
+          <Suspense fallback={<div>로딩 중...</div>}>
+            {/* Suspense는 페이지가 로딩 중일 때 보여줄 컴포넌트 */}
+            <Content>
+              <Header />
+              <Routes>
+                <Route path="/" element={<MainPage />} />
+                <Route path="/main" element={<MainPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/reservation" element={<ReservationPage />} />
+                <Route path="/select" element={<SelectPage />} />
+                <Route path="/notice" element={<NoticePage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/join" element={<JoinPage />} />
+                <Route path="/mypage" element={<MyPage />} />
+                <Route path="/writepage" element={isLoggedIn ? <WritePage /> : <LoginPage />} />
+                <Route path="/post/:id" element={<PostPage />} />
+              </Routes>
+            </Content>
+          </Suspense>
+        </AppContainer>
+      </Router>
     </QueryClientProvider>
   );
 };

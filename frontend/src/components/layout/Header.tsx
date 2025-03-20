@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
-import { accessTokenState, isLoggedInState } from '../../recoil/recoilState';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const StyledHeaderBorder = styled.div`
   border-bottom: 1px solid #333;
@@ -56,19 +55,17 @@ const StyledNav = styled.nav`
 `;
 
 const Header = () => {
-  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
+  const { accessToken, isLoggedIn, setLogin, logout } = useAuthStore();
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = localStorage.getItem('accessToken');
     if (storedToken) {
-      setAccessToken(storedToken);
-      setIsLoggedIn(true);
+      setLogin(storedToken, localStorage.getItem('refreshToken'));
     } else {
-      setIsLoggedIn(false);
+      logout();
     }
-  }, [setAccessToken, setIsLoggedIn]);
+  }, [setLogin, logout]);
 
   const handleReservationClick = () => {
     if (!accessToken) {
