@@ -1,31 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Modal from '../components/Modal';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { fetchReservations, deleteReservation, signOutUser } from '../util/api';
-import { create } from 'zustand';
-
-type MeetingRoomType = {
-  id: number;
-  name: string;
-};
-
-type ReservationType = {
-  id: number;
-  startTime: string;
-  endTime: string;
-  members: number;
-  meetingRoom: MeetingRoomType;
-};
-
-const useReservationStore = create<{
-  reservations: ReservationType[];
-  setReservations: (reservations: ReservationType[]) => void;
-}>((set) => ({
-  reservations: [],
-  setReservations: (reservations) => set({ reservations }),
-}));
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 
 const PageContainer = styled.div`
   max-width: 900px;
@@ -86,19 +65,6 @@ const DeleteButton = styled.button`
   }
 `;
 
-const MeetingRoomName = styled.p`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #0a84ff;
-  margin-bottom: 10px;
-`;
-
-const ReservationInfo = styled.p`
-  font-size: 1rem;
-  color: #b0b0b0;
-  margin: 5px 0;
-`;
-
 const LogoutButton = styled.button`
   padding: 12px 24px;
   background-color: #0a84ff;
@@ -117,21 +83,29 @@ const LogoutButton = styled.button`
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
   const { accessToken, logout } = useAuthStore();
-  const { reservations, setReservations } = useReservationStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<string>('');
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchReservations();
-        setReservations(data as ReservationType[]);
-      } catch (error) {
-        console.error('예약 정보를 가져오는 중 에러 발생:', error);
-      }
-    };
-    fetchData();
-  }, [setReservations]);
+  const {
+    data: reservations = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['reservations'],
+    queryFn: fetchReservations,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: true,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteReservation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reservations'] });
+      setModalContent('예약이 취소되었습니다.');
+      setIsModalOpen(true);
+    },
+  });
 
   const handleLogout = async () => {
     try {
@@ -148,16 +122,8 @@ const MyPage: React.FC = () => {
     }
   };
 
-  const handleDeleteReservation = async (id: number) => {
-    try {
-      await deleteReservation(id);
-      setReservations(reservations.filter((r) => r.id !== id));
-      setModalContent('예약이 취소되었습니다.');
-      setIsModalOpen(true);
-    } catch (error) {
-      console.error('예약 삭제 실패', error);
-    }
-  };
+  if (isLoading) return <p>로딩 중...</p>;
+  if (isError) return <p>데이터를 불러오는 중 오류 발생</p>;
 
   return (
     <PageContainer>
@@ -168,11 +134,11 @@ const MyPage: React.FC = () => {
       <ReservationList>
         {reservations.map((reservation) => (
           <ReservationItem key={reservation.id}>
-            <MeetingRoomName>{reservation.meetingRoom.name}</MeetingRoomName>
-            <ReservationInfo>시작 시간: {reservation.startTime.slice(0, -3)}</ReservationInfo>
-            <ReservationInfo>종료 시간: {reservation.endTime.slice(0, -3)}</ReservationInfo>
-            <ReservationInfo>사용 인원: {reservation.members}명</ReservationInfo>
-            <DeleteButton onClick={() => handleDeleteReservation(reservation.id)}>취소</DeleteButton>
+            <p>{reservation.meetingRoom.name}</p>
+            <p>시작 시간: {reservation.startTime.slice(0, -3)}</p>
+            <p>종료 시간: {reservation.endTime.slice(0, -3)}</p>
+            <p>사용 인원: {reservation.members}명</p>
+            <DeleteButton onClick={() => deleteMutation.mutate(reservation.id)}>취소</DeleteButton>
           </ReservationItem>
         ))}
       </ReservationList>
