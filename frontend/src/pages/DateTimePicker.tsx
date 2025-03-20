@@ -88,6 +88,13 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   // 인원 선택 옵션
   const membersOptions = Array.from({ length: 5 }, (_, i) => ({ value: i + 1, label: `${i + 1}명` }));
 
+  // 이미 예약된 시간을 제외하는 함수
+  const filterDisabledTimes = (time: Date) => {
+    const formattedTime = new Date(time);
+    const disabledTimes = getDisabledTimes(selectedStartDate);
+    return !disabledTimes.some((disabledTime) => disabledTime.getTime() === formattedTime.getTime());
+  };
+
   return (
     <div>
       <InputWrapper>
@@ -114,6 +121,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           dateFormat="HH:mm"
           minTime={new Date().setHours(9, 0, 0)} // 9시 이후만 선택 가능
           maxTime={new Date().setHours(21, 0, 0)} // 21시 이전만 선택 가능
+          filterTime={filterDisabledTimes} // 선택 불가능한 시간 필터링
           placeholderText="시작 시간 선택"
           disabled={!selectedStartDate}
           className="date-picker"
@@ -132,6 +140,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           dateFormat="HH:mm"
           minTime={selectedStartDate ? new Date(selectedStartDate.getTime() + 60 * 60 * 1000) : undefined} // 시작 시간보다 1시간 이후
           maxTime={selectedStartDate ? new Date(selectedStartDate.getTime() + 3 * 60 * 60 * 1000) : undefined} // 시작 시간보다 3시간 이후
+          filterTime={filterDisabledTimes} // 선택 불가능한 시간 필터링
           placeholderText="종료 시간 선택"
           disabled={!selectedStartDate}
           className="date-picker"
