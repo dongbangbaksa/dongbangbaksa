@@ -109,12 +109,11 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           onChange={onStartDateChange}
           showTimeSelect
           showTimeSelectOnly
-          timeIntervals={60}
+          timeIntervals={60} // 1시간 간격으로 시간 설정
           timeFormat="HH:mm"
           dateFormat="HH:mm"
-          minTime={new Date().setHours(9, 0, 0)}
-          maxTime={new Date().setHours(21, 0, 0)}
-          excludeTimes={getDisabledTimes(selectedStartDate)}
+          minTime={new Date().setHours(9, 0, 0)} // 9시 이후만 선택 가능
+          maxTime={new Date().setHours(21, 0, 0)} // 21시 이전만 선택 가능
           placeholderText="시작 시간 선택"
           disabled={!selectedStartDate}
           className="date-picker"
@@ -128,12 +127,11 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           onChange={onEndDateChange}
           showTimeSelect
           showTimeSelectOnly
-          timeIntervals={60}
+          timeIntervals={60} // 1시간 간격으로 시간 설정
           timeFormat="HH:mm"
           dateFormat="HH:mm"
-          minTime={selectedStartDate ? new Date(selectedStartDate.getTime() + 60 * 60 * 1000) : undefined}
-          maxTime={selectedStartDate ? new Date(selectedStartDate.getTime() + 3 * 60 * 60 * 1000) : undefined}
-          excludeTimes={getDisabledTimes(selectedStartDate)}
+          minTime={selectedStartDate ? new Date(selectedStartDate.getTime() + 60 * 60 * 1000) : undefined} // 시작 시간보다 1시간 이후
+          maxTime={selectedStartDate ? new Date(selectedStartDate.getTime() + 3 * 60 * 60 * 1000) : undefined} // 시작 시간보다 3시간 이후
           placeholderText="종료 시간 선택"
           disabled={!selectedStartDate}
           className="date-picker"
@@ -147,6 +145,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           options={membersOptions}
           value={selectedMembers}
           onChange={onMembersChange}
+          placeholder="인원 선택"
           className="react-select"
         />
       </InputWrapper>

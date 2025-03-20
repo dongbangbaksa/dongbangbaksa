@@ -25,10 +25,8 @@ const ReservationPage: React.FC = () => {
 
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
-  const [selectedMembers, setSelectedMembers] = useState<{ value: number; label: string } | null>({
-    value: 0,
-    label: '0명',
-  });
+  const [selectedMembers, setSelectedMembers] = useState<{ value: number; label: string } | null>(null);
+
   const [isReservationModalOpen, setReservationModalOpen] = useState(false);
   const [isErrorModalOpen, setErrorModalOpen] = useState(false);
 
