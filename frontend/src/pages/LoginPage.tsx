@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../components/Modal';
-import { useSetRecoilState } from 'recoil';
-import { accessTokenState, refreshTokenState, isLoggedInState } from '../recoil/recoilState';
+import { useAuthStore } from '../store/useAuthStore';
 import { signInUser } from '../util/api';
 
 const Container = styled.div`
@@ -12,33 +11,36 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #f8f8f8;
+  background-color: #1d1d1e;
 `;
 
 const FormContainer = styled.div`
-  max-width: 600px;
+  max-width: 800px;
   width: 100%;
-  padding: 40px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 70px;
+  background-color: #2c2c2e;
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
 `;
 
 const LoginText = styled.div`
   font-size: 48px;
   font-weight: bold;
-  color: #333;
+  color: #f5f5f7;
   text-align: center;
+  margin-top: 40px;
   margin-bottom: 20px;
 `;
 
 const Input = styled.input`
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
-  border: 1px solid #e4e4e4;
-  border-radius: 6px;
+  border: 1px solid #636366;
+  padding: 10px;
   font-size: 16px;
+  border-radius: 6px;
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: #3a3a3c;
+  color: #f5f5f7;
 `;
 
 const PasswordInput = styled(Input).attrs({ type: 'password', autoComplete: 'current-password' })``;
@@ -57,22 +59,27 @@ const FormGroup = styled.div`
 const Label = styled.label`
   margin-bottom: 8px;
   font-size: 14px;
-  color: #555;
+  color: #f5f5f7;
 `;
 
 const LoginButton = styled.button`
-  width: 100%;
-  padding: 12px;
-  background-color: #0071e3;
-  color: white;
   border: none;
-  border-radius: 6px;
+  background-color: #0a84ff;
+  color: white;
   font-size: 16px;
+  padding: 10px;
+  border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s;
+  width: 100%;
 
   &:hover {
-    background-color: #005bb5;
+    background-color: #0071e3;
+  }
+
+  &:disabled {
+    background-color: #636366;
+    cursor: not-allowed;
   }
 `;
 
@@ -82,9 +89,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const setAccessToken = useSetRecoilState(accessTokenState);
-  const setRefreshToken = useSetRecoilState(refreshTokenState);
-  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
+  const { setLogin } = useAuthStore();
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -101,29 +106,21 @@ const LoginPage: React.FC = () => {
       const accessTokenFromHeader = response.headers['authorization'];
       const refreshTokenFromHeader = response.headers['refresh-token'];
 
-      if (accessTokenFromHeader && accessTokenFromHeader.startsWith('Bearer ')) {
+      if (accessTokenFromHeader && accessTokenFromHeader.startsWith('Bearer ') && refreshTokenFromHeader) {
         const accessToken = accessTokenFromHeader.split(' ')[1];
-        localStorage.setItem('accessToken', accessToken);
-        setAccessToken(accessToken);
-        console.log('Access Token saved:', localStorage.getItem('accessToken')); // 저장된 액세스 토큰 확인
-      } else {
-        console.error('No access token received');
-      }
 
-      if (refreshTokenFromHeader) {
-        localStorage.setItem('refreshToken', refreshTokenFromHeader);
-        setRefreshToken(refreshTokenFromHeader);
-        console.log('Refresh Token saved:', localStorage.getItem('refreshToken')); // 저장된 리프레시 토큰 확인
-        setIsLoggedIn(true);
+        // Zustand 상태 업데이트
+        setLogin(accessToken, refreshTokenFromHeader);
+
+        console.log('Access Token saved:', accessToken);
+        console.log('Refresh Token saved:', refreshTokenFromHeader);
+
+        setIsModalOpen(true);
       } else {
-        console.error('No refresh token received');
-        alert('로그인 성공, 하지만 리프레시 토큰을 받지 못했습니다. 다시 로그인해주세요.');
-        setIsLoggedIn(false);
-        navigate('/login'); // 리프레시 토큰이 없다면 다시 로그인을 유도
+        console.error('No valid tokens received');
+        alert('로그인에 실패했습니다. 다시 로그인해주세요.');
         return;
       }
-
-      setIsModalOpen(true);
     } catch (error) {
       console.error('로그인 실패:', error);
       alert('로그인에 실패했습니다.');

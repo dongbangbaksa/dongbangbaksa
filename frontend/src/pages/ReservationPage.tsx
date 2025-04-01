@@ -1,10 +1,8 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { useMutation } from 'react-query';
+import { useAuthStore } from '../store/useAuthStore';
+import { useFetchReservations, useCreateReservation } from '../hooks/useReservation';
 
-import { accessTokenState } from '../recoil/recoilState';
-import { createReservation } from '../util/api';
 import {
   ReservationPageWrapper,
   ContentWrapper,
@@ -13,22 +11,22 @@ import {
   DateTimeSelectContainer,
   ButtonContainer,
   Button,
-} from './reservationStyled';
+} from '../styles/reservationStyled';
 
-// Lazy load Modal and DateTimePicker
 const Modal = lazy(() => import('../components/Modal'));
 const DateTimePicker = lazy(() => import('../pages/DateTimePicker'));
 
 const ReservationPage: React.FC = () => {
   const navigate = useNavigate();
-  const accessToken = useRecoilValue(accessTokenState);
+  const accessToken = useAuthStore((state) => state.accessToken);
+
+  const { data: reservations, isLoading, isError } = useFetchReservations(); // 예약 정보 가져오기
+  const { mutate: createReservation, isLoading: isCreatingReservation } = useCreateReservation(); // 예약 생성 훅
 
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
-  const [selectedMembers, setSelectedMembers] = useState<{ value: number; label: string } | null>({
-    value: 0,
-    label: '0명',
-  });
+  const [selectedMembers, setSelectedMembers] = useState<{ value: number; label: string } | null>(null);
+
   const [isReservationModalOpen, setReservationModalOpen] = useState(false);
   const [isErrorModalOpen, setErrorModalOpen] = useState(false);
 
@@ -55,16 +53,6 @@ const ReservationPage: React.FC = () => {
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   };
 
-  const mutation = useMutation(createReservation, {
-    onSuccess: () => {
-      setReservationModalOpen(true);
-    },
-    onError: (error) => {
-      console.error('예약 실패:', error);
-      setErrorModalOpen(true);
-    },
-  });
-
   const handleReservation = () => {
     if (selectedStartDate && selectedEndDate && selectedMembers?.value !== undefined) {
       if (selectedStartDate >= selectedEndDate) {
@@ -87,7 +75,16 @@ const ReservationPage: React.FC = () => {
 
       console.log('예약 데이터:', reservationData);
 
-      mutation.mutate(reservationData); // 예약 요청
+      createReservation(reservationData, {
+        onSuccess: () => {
+          // 예약 성공 시 모달 열기
+          setReservationModalOpen(true);
+        },
+        onError: () => {
+          // 예약 실패 시 에러 모달 열기
+          setErrorModalOpen(true);
+        },
+      }); // 예약 요청
     } else {
       console.error('모든 요소를 선택해주세요.');
     }
@@ -98,6 +95,14 @@ const ReservationPage: React.FC = () => {
       navigate('/Login');
     }
   }, [accessToken, navigate]);
+
+  if (isLoading) {
+    return <div>Loading reservations...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading reservations</div>;
+  }
 
   return (
     <ReservationPageWrapper>
@@ -132,8 +137,8 @@ const ReservationPage: React.FC = () => {
         </DateTimeSelectContainer>
       </ContentWrapper>
       <ButtonContainer>
-        <Button onClick={handleReservation} disabled={mutation.isLoading}>
-          {mutation.isLoading ? '예약 중...' : '예약하기'}
+        <Button onClick={handleReservation} disabled={isCreatingReservation}>
+          {isCreatingReservation ? '예약 중...' : '예약하기'}
         </Button>
       </ButtonContainer>
     </ReservationPageWrapper>

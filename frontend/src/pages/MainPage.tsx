@@ -74,8 +74,8 @@ const MainPage: React.FC = () => {
   return (
     <Container>
       <ContentWrapper>
-        <Title>동아리방 예약 서비스 동방박사</Title>
-        <Subtitle>예약 취소를 간편하게!</Subtitle>
+        <Title>예약과 취소를 간편하게, 동방박사</Title>
+        <Subtitle>동아리방 사용시간 예약 서비스 </Subtitle>
 
         <Box to="/select">
           <BoxSubtitle>스마트하게</BoxSubtitle>

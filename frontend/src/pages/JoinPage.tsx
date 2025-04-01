@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { AxiosError } from 'axios';
 import { Link } from 'react-router-dom';
 import Modal from '../components/Modal';
 import { requestEmailVerification, confirmEmailVerification, signUpUser } from '../util/api';
@@ -34,10 +33,12 @@ const LoginLink = styled(Link)`
 `;
 
 const FormContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 1000px;
   background-color: #2c2c2e;
+  padding-left: 140px;
+  padding-right: 230px;
+  padding-top: 30px;
+  padding-bottom: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
 `;
@@ -50,7 +51,8 @@ const StyledForm = styled.form`
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  width: 100%;
 `;
 
 const Label = styled.label`
@@ -61,7 +63,7 @@ const Label = styled.label`
 
 const Select = styled.select`
   border: 1px solid #636366;
-  padding: 10px;
+  padding: 12px;
   font-size: 16px;
   border-radius: 6px;
   width: 100%;
@@ -71,11 +73,11 @@ const Select = styled.select`
 
 const Input = styled.input`
   border: 1px solid #636366;
-  padding: 10px;
+  padding: 12px;
   font-size: 16px;
   border-radius: 6px;
-  width: 100%;
-  margin-bottom: 10px;
+  width: 120%;
+  margin-bottom: 15px;
   background-color: #3a3a3c;
   color: #f5f5f7;
 `;
@@ -85,11 +87,12 @@ const Button = styled.button`
   background-color: #0a84ff;
   color: #ffffff;
   font-size: 16px;
-  padding: 10px;
+  padding: 12px;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s;
-  width: 100%;
+  width: 130%;
+  margin-top: 10px;
 
   &:hover {
     background-color: #0071e3;
@@ -128,7 +131,7 @@ const JoinPage: React.FC = () => {
       const response = await confirmEmailVerification(email, authCode);
       setIsModalOpen(true);
       setModalContent(response.message);
-      setVerificationMessage('인증이 완료되었습니다.');
+      setVerificationMessage('인증이 완료 되었습니다.');
     } catch (error) {
       console.error('인증 확인 중 에러:', error);
     }
@@ -169,7 +172,7 @@ const JoinPage: React.FC = () => {
           <FormGroup>
             <Label htmlFor="affiliation">소속</Label>
             <Select id="affiliation" value={affiliation} onChange={(e) => setAffiliation(e.target.value)}>
-              <option value="">선택하세요</option>
+              <option value="">소속 선택</option>
               <option value="Techeer">Techeer</option>
               <option value="TecheerPartners">Techeer Partners</option>
             </Select>
@@ -182,17 +185,33 @@ const JoinPage: React.FC = () => {
             <Label htmlFor="email">이메일</Label>
             <Input id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             <Button type="button" onClick={handleSendCodeClick} disabled={!email}>
-              인증
+              인증 메일 전송
             </Button>
           </FormGroup>
           <FormGroup>
             <Label htmlFor="authCode">인증코드</Label>
             <Input id="authCode" value={authCode} onChange={(e) => setAuthCode(e.target.value)} />
             <Button type="button" onClick={handleConfirmAuthClick} disabled={!authCode}>
-              인증확인
+              인증 확인
             </Button>
             <div>{verificationMessage}</div>
           </FormGroup>
+
+          {/* 추가된 비밀번호 입력란 */}
+          <FormGroup>
+            <Label htmlFor="password">비밀번호</Label>
+            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="passwordConfirm">비밀번호 확인</Label>
+            <Input
+              id="passwordConfirm"
+              type="password"
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+            />
+          </FormGroup>
+
           <Button type="submit">가입하기</Button>
         </StyledForm>
       </FormContainer>
