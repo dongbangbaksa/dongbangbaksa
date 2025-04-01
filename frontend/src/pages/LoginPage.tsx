@@ -11,33 +11,36 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #f8f8f8;
+  background-color: #1d1d1e;
 `;
 
 const FormContainer = styled.div`
-  max-width: 600px;
+  max-width: 800px;
   width: 100%;
-  padding: 40px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 70px;
+  background-color: #2c2c2e;
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
 `;
 
 const LoginText = styled.div`
   font-size: 48px;
   font-weight: bold;
-  color: #333;
+  color: #f5f5f7;
   text-align: center;
+  margin-top: 40px;
   margin-bottom: 20px;
 `;
 
 const Input = styled.input`
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
-  border: 1px solid #e4e4e4;
-  border-radius: 6px;
+  border: 1px solid #636366;
+  padding: 10px;
   font-size: 16px;
+  border-radius: 6px;
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: #3a3a3c;
+  color: #f5f5f7;
 `;
 
 const PasswordInput = styled(Input).attrs({ type: 'password', autoComplete: 'current-password' })``;
@@ -56,22 +59,27 @@ const FormGroup = styled.div`
 const Label = styled.label`
   margin-bottom: 8px;
   font-size: 14px;
-  color: #555;
+  color: #f5f5f7;
 `;
 
 const LoginButton = styled.button`
-  width: 100%;
-  padding: 12px;
-  background-color: #0071e3;
-  color: white;
   border: none;
-  border-radius: 6px;
+  background-color: #0a84ff;
+  color: white;
   font-size: 16px;
+  padding: 10px;
+  border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s;
+  width: 100%;
 
   &:hover {
-    background-color: #005bb5;
+    background-color: #0071e3;
+  }
+
+  &:disabled {
+    background-color: #636366;
+    cursor: not-allowed;
   }
 `;
 
@@ -110,7 +118,7 @@ const LoginPage: React.FC = () => {
         setIsModalOpen(true);
       } else {
         console.error('No valid tokens received');
-        alert('로그인 성공, 하지만 토큰을 받지 못했습니다. 다시 로그인해주세요.');
+        alert('로그인에 실패했습니다. 다시 로그인해주세요.');
         return;
       }
     } catch (error) {

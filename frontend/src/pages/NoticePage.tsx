@@ -9,6 +9,7 @@ const PageContainer = styled.div`
   align-items: center;
   max-width: 1000px;
   padding: 20px;
+  padding-top: 700px;
   background-color: #1c1c1e;
   color: #f5f5f7;
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -158,17 +159,24 @@ const NoticePage: React.FC = () => {
     navigate('/WritePage');
   };
 
+  const ContentWrapper = styled.div`
+    width: 100%;
+    padding-top: 20px; /* h1과 겹치지 않도록 조정 */
+  `;
+
   return (
     <PageContainer>
-      <h1>공지사항</h1>
-      {data.map((item) => (
-        <StyledLink to={`/Post/${item.boardId}`} key={item.boardId}>
-          <Box>
-            <Title>{item.title}</Title>
-            <Content>{item.context}</Content>
-          </Box>
-        </StyledLink>
-      ))}
+      <h1>공지사항</h1> {/* 스크롤하면 자연스럽게 사라짐 */}
+      <ContentWrapper>
+        {data.map((item) => (
+          <StyledLink to={`/Post/${item.boardId}`} key={item.boardId}>
+            <Box>
+              <Title>{item.title}</Title>
+              <Content>{item.context}</Content>
+            </Box>
+          </StyledLink>
+        ))}
+      </ContentWrapper>
       {loading && <p>Loading...</p>}
       {hasMore && <div ref={lastElementRef} />}
       <WriteButton onClick={handleWriteClick}>글쓰기</WriteButton>

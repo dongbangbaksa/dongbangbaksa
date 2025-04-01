@@ -105,7 +105,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           dateFormat="yyyy-MM-dd"
           minDate={new Date()}
           className="date-picker"
-          placeholderText="날짜를 선택하세요"
+          placeholderText="날짜 선택"
         />
       </InputWrapper>
 
