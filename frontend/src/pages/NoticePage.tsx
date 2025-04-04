@@ -3,6 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { fetchNoticeBoards } from '../util/api';
 
+const ContentWrapper = styled.div`
+  width: 100%;
+  padding-top: 20px;
+`;
+
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -158,11 +163,6 @@ const NoticePage: React.FC = () => {
   const handleWriteClick = () => {
     navigate('/WritePage');
   };
-
-  const ContentWrapper = styled.div`
-    width: 100%;
-    padding-top: 20px; /* h1과 겹치지 않도록 조정 */
-  `;
 
   return (
     <PageContainer>
