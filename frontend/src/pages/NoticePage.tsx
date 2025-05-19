@@ -90,74 +90,65 @@ interface BoardItem {
 
 const NoticePage: React.FC = () => {
   const [data, setData] = useState<BoardItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [hasMore, setHasMore] = useState<boolean>(true);
   const [cursor, setCursor] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const observer = useRef<IntersectionObserver>();
   const lastElementRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
-
     if (!accessToken || !refreshToken) {
-      console.log('Access token or refresh token is missing. Redirecting to login.');
       navigate('/login');
+      return;
     }
 
     fetchData();
   }, []);
 
   useEffect(() => {
-    if (cursor) {
-      observer.current = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting && hasMore && !loading) {
-            loadMore();
-          }
-        },
-        { threshold: 1.0 },
-      );
+    if (!cursor) return;
+    observer.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          fetchData();
+        }
+      },
+      { threshold: 1.0 },
+    );
 
-      if (lastElementRef.current) {
-        observer.current.observe(lastElementRef.current);
-      }
-    }
+    const target = lastElementRef.current;
+    if (target) observer.current.observe(target);
 
-    return () => observer.current?.disconnect();
-  }, [loading, hasMore, cursor]);
+    return () => {
+      if (target) observer.current?.unobserve(target);
+    };
+  }, [cursor, hasMore, loading]);
 
   const fetchData = async () => {
     if (!hasMore || loading) return;
     setLoading(true);
-    try {
-      const response = await fetchNoticeBoards('NOTICE', cursor);
-      console.log('API response:', response);
-      const { values, hasNext, cursor: newCursor } = response;
 
-      if (!values || values.length === 0) {
-        setHasMore(false);
-      } else {
-        setData((prevData) => {
-          const newDataIds = new Set(values.map((item: BoardItem) => item.boardId));
-          const filteredPrevData = prevData.filter((item) => !newDataIds.has(item.boardId));
-          return [...filteredPrevData, ...values];
-        });
-        setCursor(newCursor);
-        setHasMore(hasNext);
-      }
-    } catch (error) {
-      console.error('Error loading data:', error);
-      alert('An error occurred while loading data.');
+    try {
+      const res = await fetchNoticeBoards('NOTICE', cursor);
+      const { values, hasNext, cursor: newCursor } = res;
+
+      setData((prev) => {
+        const existingIds = new Set(prev.map((item) => item.boardId));
+        const newItems = values.filter((item: BoardItem) => !existingIds.has(item.boardId));
+        return [...prev, ...newItems];
+      });
+
+      setCursor(newCursor);
+      setHasMore(hasNext);
+    } catch (e) {
+      console.error('공지사항 로딩 실패:', e);
       setHasMore(false);
     } finally {
       setLoading(false);
     }
-  };
-
-  const loadMore = () => {
-    fetchData();
   };
 
   const handleWriteClick = () => {
