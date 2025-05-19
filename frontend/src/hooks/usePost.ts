@@ -1,22 +1,28 @@
-import { useQuery, useMutation } from 'react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { fetchNoticeBoards, fetchPostById, createPost, deletePostById } from '../util/api';
 
 // 게시물 목록 가져오는 훅
 export const useFetchNoticeBoards = (category: string, cursor: string | null) => {
-  return useQuery(['noticeBoards', category, cursor], () => fetchNoticeBoards(category, cursor));
+  return useQuery({
+    queryKey: ['noticeBoards', category, cursor],
+    queryFn: () => fetchNoticeBoards(category, cursor),
+  });
 };
 
 // 게시물 조회 훅
 export const useFetchPostById = (id: string | undefined) => {
-  return useQuery(['post', id], () => fetchPostById(id));
+  return useQuery({
+    queryKey: ['post', id],
+    queryFn: () => fetchPostById(id),
+    enabled: !!id, // id가 있을 때만 fetch
+  });
 };
 
 // 게시물 작성 훅
 export const useCreatePost = () => {
-  return useMutation(createPost, {
-    onSuccess: () => {
-      // 게시물 작성 성공 시 처리
-    },
+  return useMutation({
+    mutationFn: createPost,
+    onSuccess: () => {},
     onError: (error) => {
       console.error('게시물 작성 실패:', error);
     },
@@ -25,10 +31,9 @@ export const useCreatePost = () => {
 
 // 게시물 삭제 훅
 export const useDeletePostById = () => {
-  return useMutation(deletePostById, {
-    onSuccess: () => {
-      // 게시물 삭제 후 처리
-    },
+  return useMutation({
+    mutationFn: deletePostById,
+    onSuccess: () => {},
     onError: (error) => {
       console.error('게시물 삭제 실패:', error);
     },
