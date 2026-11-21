@@ -148,14 +148,14 @@ const MyPage: React.FC = () => {
     try {
       if (accessToken) {
         await signOutUser(accessToken);
-        setModalContent('로그아웃이 완료되었습니다.');
-        setIsModalOpen(true);
-        logout();
       }
     } catch (error) {
-      console.error('로그아웃 실패:', error);
-      setModalContent('로그아웃 실패. 다시 시도해 주세요.');
+      console.error('서버 로그아웃 실패 (로컬 세션은 정리합니다):', error);
+    } finally {
+      logout();
+      setModalContent('로그아웃이 완료되었습니다.');
       setIsModalOpen(true);
+      navigate('/Login');
     }
   };
 
