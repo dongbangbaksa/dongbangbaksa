@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Select from 'react-select';
-import axiosInstance from '../util/axiosConfig';
+import { useFetchReservations } from '../hooks/useReservation';
 import { InputWrapper } from '../styles/reservationStyled';
 
 interface DateTimePickerProps {
@@ -22,77 +22,92 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   selectedMembers,
   onMembersChange,
 }) => {
-  const [reservedTimes, setReservedTimes] = useState<{ start: Date; end: Date }[]>([]);
+  // 예약 목록은 TanStack Query 캐시(['reservations'])를 공유 — 예약 생성 후 invalidateQueries 시 비활성화 시간도 즉시 갱신
+  const { data: reservations } = useFetchReservations();
 
-  // 예약 데이터 불러오기
-  const fetchReservations = useCallback(async () => {
-    try {
-      const response = await axiosInstance.get('/api/reservation/all');
+  const reservedTimes = useMemo(() => {
+    const formatDateString = (dateString: string) => {
+      const regex = /^(\d{4})년 (\d{2})월 (\d{2})일 (\d{2}):(\d{2}):(\d{2})$/;
+      const match = dateString.match(regex);
+      if (!match) return '';
+      const [, year, month, day, hour, minute, second] = match;
+      return `${year}-${month}-${day}T${hour}:${minute}:${second}`;
+    };
 
-      const formatDateString = (dateString: string) => {
-        const regex = /^(\d{4})년 (\d{2})월 (\d{2})일 (\d{2}):(\d{2}):(\d{2})$/;
-        const match = dateString.match(regex);
+    if (!Array.isArray(reservations)) return [];
 
-        if (!match) return '';
+    return reservations
+      .map((res: { startTime: string; endTime: string }) => {
+        const formattedStart = formatDateString(res.startTime);
+        const formattedEnd = formatDateString(res.endTime);
+        if (!formattedStart || !formattedEnd) return null;
+        return { start: new Date(formattedStart), end: new Date(formattedEnd) };
+      })
+      .filter((v): v is { start: Date; end: Date } => v !== null);
+  }, [reservations]);
 
-        const [_, year, month, day, hour, minute, second] = match;
-        return `${year}-${month}-${day}T${hour}:${minute}:${second}`;
-      };
-
-      const formattedReservations = response.data
-        .map((res: { startTime: string; endTime: string }) => {
-          const formattedStart = formatDateString(res.startTime);
-          const formattedEnd = formatDateString(res.endTime);
-
-          if (!formattedStart || !formattedEnd) return null;
-
-          return {
-            start: new Date(formattedStart),
-            end: new Date(formattedEnd),
-          };
-        })
-        .filter(Boolean);
-
-      setReservedTimes(formattedReservations);
-    } catch (error) {
-      console.error('예약 데이터를 불러오는 중 오류 발생:', error);
-    }
-  }, []);
-
-  // 특정 날짜의 예약된 시간 리스트 반환
-  const getDisabledTimes = useCallback(
-    (selectedDate: Date | null) => {
-      if (!selectedDate) return [];
-
-      const disabledTimes: Date[] = [];
-
-      reservedTimes
-        .filter(({ start, end }) => selectedDate.toDateString() === start.toDateString()) // 같은 날짜의 예약된 시간만 필터링
-        .forEach(({ start, end }) => {
-          let current = new Date(start); // start 시간부터 시작
-          while (current <= end) {
-            disabledTimes.push(new Date(current.setMinutes(0, 0, 0))); // 정확히 시각만 맞춰서 00분 00초로 설정
-            current.setHours(current.getHours() + 1); // 1시간 간격으로 설정
-          }
-        });
-
-      return disabledTimes;
-    },
-    [reservedTimes],
-  );
-
-  useEffect(() => {
-    fetchReservations(); // 예약 데이터를 불러옴
-  }, [fetchReservations]);
+  // 선택한 날짜에 해당하는 예약 구간만 반환
+  const getReservationsForSelectedDate = useCallback(() => {
+    if (!selectedStartDate) return [];
+    return reservedTimes.filter(({ start }) => start.toDateString() === selectedStartDate.toDateString());
+  }, [reservedTimes, selectedStartDate]);
 
   // 인원 선택 옵션
   const membersOptions = Array.from({ length: 5 }, (_, i) => ({ value: i + 1, label: `${i + 1}명` }));
 
-  // 이미 예약된 시간을 제외하는 함수
-  const filterDisabledTimes = (time: Date) => {
-    const formattedTime = new Date(time);
-    const disabledTimes = getDisabledTimes(selectedStartDate);
-    return !disabledTimes.some((disabledTime) => disabledTime.getTime() === formattedTime.getTime());
+  // 운영 시간(09:00~21:00) 외의 시간은 목록에서 숨김
+  const OPENING_HOUR = 9;
+  const CLOSING_HOUR = 21;
+  const isWithinBusinessHours = (hour: number) => hour >= OPENING_HOUR && hour <= CLOSING_HOUR;
+
+  const isSameDay = (a: Date, b: Date) => a.toDateString() === b.toDateString();
+
+  // 오늘 날짜 기준으로 이미 지난 시각(시 단위)인지 확인 — 현재 시각과 같은 시간대는 예약 가능
+  const isPastStartHour = (hour: number) => {
+    if (!selectedStartDate) return false;
+    const now = new Date();
+    if (!isSameDay(selectedStartDate, now)) return false;
+    return hour < now.getHours();
+  };
+
+  const getStartMinTime = (): Date => {
+    const min = new Date();
+    min.setHours(OPENING_HOUR, 0, 0, 0);
+    if (selectedStartDate && isSameDay(selectedStartDate, new Date())) {
+      const currentHour = Math.max(OPENING_HOUR, new Date().getHours());
+      min.setHours(currentHour, 0, 0, 0);
+    }
+    return min;
+  };
+
+  // 시작 시간 필터: 지난 시각·예약 구간 내부(start <= 시각 < end)는 시작 불가
+  const filterStartTimes = (time: Date) => {
+    const hour = time.getHours();
+    if (!isWithinBusinessHours(hour)) return false;
+    if (isPastStartHour(hour)) return false;
+    return !getReservationsForSelectedDate().some(({ start, end }) => hour >= start.getHours() && hour < end.getHours());
+  };
+
+  // 종료 시간 필터: [시작 시간, 종료 시간] 구간이 예약 구간과 겹치면 불가
+  const filterEndTimes = (time: Date) => {
+    if (!selectedStartDate) return true;
+    const endHour = time.getHours();
+    if (!isWithinBusinessHours(endHour)) return false;
+    const startHour = selectedStartDate.getHours();
+    return !getReservationsForSelectedDate().some(
+      ({ start, end }) => startHour < end.getHours() && endHour > start.getHours(),
+    );
+  };
+
+  // 종료 시간 선택 시 시작 날짜와 같은 날짜로 맞춰줌 (날짜가 오늘로 잡히는 문제 방지)
+  const handleEndTimeChange = (time: Date | null) => {
+    if (time && selectedStartDate) {
+      const merged = new Date(selectedStartDate);
+      merged.setHours(time.getHours(), time.getMinutes(), 0, 0);
+      onEndDateChange(merged);
+    } else {
+      onEndDateChange(time);
+    }
   };
 
   return (
@@ -119,9 +134,9 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           timeIntervals={60} // 1시간 간격으로 시간 설정
           timeFormat="HH:mm"
           dateFormat="HH:mm"
-          minTime={new Date(new Date().setHours(9, 0, 0, 0))}
+          minTime={getStartMinTime()}
           maxTime={new Date(new Date().setHours(21, 0, 0, 0))}
-          filterTime={filterDisabledTimes}
+          filterTime={filterStartTimes}
           placeholderText="시작 시간 선택"
           disabled={!selectedStartDate}
           className="date-picker"
@@ -132,7 +147,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         <label>종료 시간</label>
         <DatePicker
           selected={selectedEndDate}
-          onChange={onEndDateChange}
+          onChange={handleEndTimeChange}
           showTimeSelect
           showTimeSelectOnly
           timeIntervals={60} // 1시간 간격으로 시간 설정
@@ -140,7 +155,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           dateFormat="HH:mm"
           minTime={selectedStartDate ? new Date(selectedStartDate.getTime() + 60 * 60 * 1000) : undefined} // 시작 시간보다 1시간 이후
           maxTime={selectedStartDate ? new Date(selectedStartDate.getTime() + 3 * 60 * 60 * 1000) : undefined} // 시작 시간보다 3시간 이후
-          filterTime={filterDisabledTimes} // 선택 불가능한 시간 필터링
+          filterTime={filterEndTimes} // 선택 불가능한 시간 필터링
           placeholderText="종료 시간 선택"
           disabled={!selectedStartDate}
           className="date-picker"
