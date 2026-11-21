@@ -13,6 +13,8 @@ import {
   Button,
 } from '../styles/reservationStyled';
 
+const MAX_RESERVATION_HOURS = 3;
+
 const Modal = lazy(() => import('../components/Modal'));
 const DateTimePicker = lazy(() => import('../pages/DateTimePicker'));
 
@@ -20,8 +22,8 @@ const ReservationPage: React.FC = () => {
   const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
 
-  const { data: reservations, isLoading, isError } = useFetchReservations(); // 예약 정보 가져오기
-  const { mutate: createReservation, isLoading: isCreatingReservation } = useCreateReservation(); // 예약 생성 훅
+  const { isLoading, isError } = useFetchReservations(); // 예약 정보 가져오기
+  const { mutate: createReservation, isPending: isCreatingReservation } = useCreateReservation(); // 예약 생성 훅
 
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
@@ -29,6 +31,7 @@ const ReservationPage: React.FC = () => {
 
   const [isReservationModalOpen, setReservationModalOpen] = useState(false);
   const [isErrorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('예약에 실패했습니다. 다시 시도해주세요.');
 
   const handleStartDateChange = (date: Date | null) => {
     setSelectedStartDate(date);
@@ -53,13 +56,37 @@ const ReservationPage: React.FC = () => {
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   };
 
-  const handleReservation = () => {
-    if (selectedStartDate && selectedEndDate && selectedMembers?.value !== undefined) {
-      if (selectedStartDate >= selectedEndDate) {
-        alert('예약 시작 시간은 종료 시간보다 이전이어야 합니다.');
-        return;
-      }
+  const showError = (message: string) => {
+    setErrorMessage(message);
+    setErrorModalOpen(true);
+  };
 
+  // 제출 직전 최종 검증: 필수값 누락 · 시간 역전 · 지난 시간 · 최대 이용 시간
+  const validateReservation = (): string | null => {
+    if (!selectedStartDate) return '예약 날짜와 시작 시간을 선택해주세요.';
+    if (!selectedEndDate) return '종료 시간을 선택해주세요.';
+    if (!selectedMembers) return '인원을 선택해주세요.';
+    if (selectedStartDate >= selectedEndDate) return '예약 시작 시간은 종료 시간보다 이전이어야 합니다.';
+
+    const now = new Date();
+    if (selectedStartDate.toDateString() === now.toDateString() && selectedStartDate.getHours() < now.getHours()) {
+      return '이미 지난 시간은 예약할 수 없습니다.';
+    }
+
+    const durationHours = (selectedEndDate.getTime() - selectedStartDate.getTime()) / (60 * 60 * 1000);
+    if (durationHours > MAX_RESERVATION_HOURS) return `최대 ${MAX_RESERVATION_HOURS}시간까지만 예약할 수 있습니다.`;
+
+    return null;
+  };
+
+  const handleReservation = () => {
+    const validationError = validateReservation();
+    if (validationError) {
+      showError(validationError);
+      return;
+    }
+
+    if (selectedStartDate && selectedEndDate && selectedMembers) {
       const adjustedStartDate = new Date(selectedStartDate);
       adjustedStartDate.setSeconds(1);
 
@@ -73,20 +100,17 @@ const ReservationPage: React.FC = () => {
         meetingRoomId: 1,
       };
 
-      console.log('예약 데이터:', reservationData);
-
       createReservation(reservationData, {
         onSuccess: () => {
           // 예약 성공 시 모달 열기
           setReservationModalOpen(true);
         },
-        onError: () => {
-          // 예약 실패 시 에러 모달 열기
-          setErrorModalOpen(true);
+        onError: (error: any) => {
+          // 서버가 내려준 에러 메시지가 있으면 그대로 노출
+          const serverMessage = error?.response?.data?.errorMessage;
+          showError(serverMessage || '예약에 실패했습니다. 다시 시도해주세요.');
         },
       }); // 예약 요청
-    } else {
-      console.error('모든 요소를 선택해주세요.');
     }
   };
 
@@ -114,7 +138,7 @@ const ReservationPage: React.FC = () => {
         </Modal>
         <Modal isOpen={isErrorModalOpen} onClose={() => setErrorModalOpen(false)}>
           <div>
-            <p>예약에 실패했습니다. 다시 시도해주세요.</p>
+            <p>{errorMessage}</p>
           </div>
         </Modal>
       </Suspense>

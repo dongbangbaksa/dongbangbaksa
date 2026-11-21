@@ -26,12 +26,26 @@ const Title = styled.h1`
   font-weight: 700;
   margin-bottom: 10px;
   color: #0a84ff;
+  word-break: keep-all;
+
+  @media (max-width: 768px) {
+    font-size: 2.25rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.75rem;
+  }
 `;
 
 const Subtitle = styled.p`
   font-size: 1.25rem;
   color: #b0b0b0;
   margin-bottom: 40px;
+
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
 `;
 
 const Box = styled(Link)`
@@ -48,6 +62,11 @@ const Box = styled(Link)`
     box-shadow 0.3s ease;
   text-decoration: none;
   color: inherit;
+
+  @media (max-width: 480px) {
+    padding: 20px;
+    border-radius: 14px;
+  }
 
   &:hover {
     background: #3a3a3c;
