@@ -30,10 +30,15 @@ const useReservationStore = create<{
 const PageContainer = styled.div`
   max-width: 900px;
   margin: 0 auto;
+  width: 100%;
   padding: 40px;
   background-color: #1c1c1e;
   color: white;
   text-align: center;
+
+  @media (max-width: 768px) {
+    padding: 24px 16px;
+  }
 `;
 
 const Title = styled.h1`
@@ -41,6 +46,11 @@ const Title = styled.h1`
   font-weight: bold;
   color: #0a84ff;
   margin-bottom: 40px;
+
+  @media (max-width: 480px) {
+    font-size: 1.8rem;
+    margin-bottom: 24px;
+  }
 `;
 
 const ReservationList = styled.ul`
@@ -52,7 +62,8 @@ const ReservationList = styled.ul`
 `;
 
 const ReservationItem = styled.li`
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
   background-color: #2c2c2e;
   border-radius: 15px;
   padding: 20px;

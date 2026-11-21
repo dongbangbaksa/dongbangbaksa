@@ -16,8 +16,16 @@ const Container = styled.div`
 
 const FormContainer = styled.div`
   max-width: 800px;
-  width: 100%;
+  width: 90%;
   padding: 70px;
+
+  @media (max-width: 768px) {
+    padding: 40px 32px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 24px 20px;
+  }
   background-color: #2c2c2e;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
@@ -30,6 +38,11 @@ const LoginText = styled.div`
   text-align: center;
   margin-top: 40px;
   margin-bottom: 20px;
+
+  @media (max-width: 480px) {
+    font-size: 32px;
+    margin-top: 16px;
+  }
 `;
 
 const Input = styled.input`

@@ -33,14 +33,17 @@ const LoginLink = styled(Link)`
 `;
 
 const FormContainer = styled.div`
-  max-width: 1000px;
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto;
   background-color: #2c2c2e;
-  padding-left: 140px;
-  padding-right: 230px;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding: 30px 40px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+
+  @media (max-width: 480px) {
+    padding: 24px 20px;
+  }
 `;
 
 const StyledForm = styled.form`
@@ -76,7 +79,7 @@ const Input = styled.input`
   padding: 12px;
   font-size: 16px;
   border-radius: 6px;
-  width: 120%;
+  width: 100%;
   margin-bottom: 15px;
   background-color: #3a3a3c;
   color: #f5f5f7;
@@ -91,7 +94,7 @@ const Button = styled.button`
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s;
-  width: 130%;
+  width: 100%;
   margin-top: 10px;
 
   &:hover {

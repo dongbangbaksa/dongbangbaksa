@@ -20,6 +20,17 @@ const StyledHeader = styled.div`
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 30px;
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+    gap: 10px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 10px;
+    gap: 6px;
+  }
 `;
 
 const Logo = styled(Link)`
@@ -27,12 +38,23 @@ const Logo = styled(Link)`
   font-weight: bold;
   color: #0a84ff;
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const StyledNav = styled.nav`
   ul {
     list-style: none;
     display: flex;
+    flex-wrap: nowrap;
     padding: 0;
     margin: 0;
 
@@ -44,12 +66,31 @@ const StyledNav = styled.nav`
         text-decoration: none;
         font-size: 1.2rem;
         font-weight: 500;
+        white-space: nowrap;
         transition: color 0.3s ease;
 
         &:hover {
           color: #0a84ff;
         }
       }
+    }
+  }
+
+  @media (max-width: 768px) {
+    ul li {
+      margin: 0 10px;
+    }
+    ul li a {
+      font-size: 1.05rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    ul li {
+      margin: 0 6px;
+    }
+    ul li a {
+      font-size: 0.9rem;
     }
   }
 `;

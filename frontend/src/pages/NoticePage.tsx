@@ -12,9 +12,12 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
   max-width: 1000px;
+  min-height: 100%;
+  box-sizing: border-box;
   padding: 20px;
-  padding-top: 700px;
+  padding-top: 48px;
   background-color: #1c1c1e;
   color: #f5f5f7;
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;

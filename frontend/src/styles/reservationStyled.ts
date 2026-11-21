@@ -7,9 +7,13 @@ export const ReservationPageWrapper = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100vh;
+  min-height: 100%;
   background-color: #1d1d1f; // 다크 배경
   padding: 20px;
+
+  @media (max-width: 480px) {
+    padding: 16px 12px;
+  }
   color: #f5f5f7; // Apple 기본 텍스트 색상
   font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Helvetica Neue', Arial, sans-serif;
 `;
@@ -27,6 +31,10 @@ export const ContentWrapper = styled.div`
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 480px) {
+    padding: 16px 12px;
+  }
 `;
 
 // 헤더 스타일
@@ -41,6 +49,10 @@ export const Title = styled.h1`
   color: #f5f5f7;
   margin: 0;
   letter-spacing: -0.5px;
+
+  @media (max-width: 480px) {
+    font-size: 22px;
+  }
 `;
 
 // 버튼 컨테이너
@@ -176,16 +188,67 @@ export const InputWrapper = styled.div`
     margin-bottom: 8px;
   }
 
+  .react-datepicker-wrapper {
+    width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    margin-bottom: 14px;
+
+    label {
+      font-size: 16px;
+    }
+
+    .date-picker,
+    .react-select__control {
+      height: 44px;
+      min-height: 44px;
+      font-size: 16px;
+    }
+  }
+
   .date-picker,
   .react-select__control {
+    box-sizing: border-box;
     width: 100%;
     height: 50px;
+    min-height: 50px;
     font-size: 18px;
-    padding: 10px;
     border-radius: 10px;
     background-color: #2c2c2e;
     color: #ffffff;
     border: 1px solid #3a3a3c;
+    box-shadow: none;
+  }
+
+  .date-picker {
+    padding: 10px;
+  }
+
+  .react-select__control--is-focused {
+    border-color: #0a84ff;
+    box-shadow: 0 0 6px rgba(10, 132, 255, 0.5);
+  }
+
+  .react-select__value-container {
+    height: 100%;
+    padding: 0 10px;
+  }
+
+  .react-select__indicators {
+    height: 100%;
+  }
+
+  .react-select__single-value,
+  .react-select__input-container,
+  .react-select__input {
+    color: #ffffff !important;
+    font-size: 18px;
+  }
+
+  .react-select__placeholder {
+    color: #8e8e93;
+    font-size: 18px;
   }
 
   .react-select__menu {
@@ -197,6 +260,11 @@ export const InputWrapper = styled.div`
     font-size: 18px;
     color: #ffffff;
     padding: 12px;
+    background-color: transparent;
+  }
+
+  .react-select__option--is-focused {
+    background-color: #0071e3;
   }
 
   .react-select__option:hover {
